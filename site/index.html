@@ -178,6 +178,33 @@
   .panel .hint{color:var(--mute);font-size:13px;margin-top:14px;line-height:1.6}
   .panel .hint b{color:var(--dim)}
 
+  /* finds-and-fixes trio */
+  .tools3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .tool{background:var(--surface);border:1px solid var(--line);border-radius:16px;
+    padding:26px;transition:border-color .2s,transform .2s;display:flex;
+    flex-direction:column}
+  .tool:hover{border-color:var(--accent);transform:translateY(-3px)}
+  .tool .th{display:flex;align-items:center;gap:11px;margin-bottom:12px}
+  .tool .ic2{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;
+    background:rgba(37,224,208,.1);border:1px solid rgba(37,224,208,.22);flex:0 0 auto}
+  .tool .ic2 svg{width:20px;height:20px;color:var(--accent)}
+  .tool h3{font-size:16px;font-weight:700}
+  .tool h3 span{display:block;font-family:var(--mono);font-size:11.5px;
+    color:var(--mute);font-weight:400;margin-top:2px}
+  .tool p{color:var(--dim);font-size:14px;flex:1}
+  .tool .tcmd{margin-top:14px;background:#0a0d13;border:1px solid var(--line);
+    border-radius:8px;padding:10px 12px;font-family:var(--mono);font-size:12px;
+    color:#c7d0e0;overflow-x:auto;white-space:nowrap}
+  .tool .tcmd b{color:var(--accent);font-weight:600}
+  .badgevis{margin-top:14px;display:inline-flex;align-items:center;height:22px;
+    border-radius:4px;overflow:hidden;font-family:Verdana,sans-serif;font-size:11px;
+    align-self:flex-start}
+  .badgevis .bl{background:#555;color:#fff;padding:0 9px;height:100%;
+    display:flex;align-items:center}
+  .badgevis .bv{background:#2ea043;color:#fff;padding:0 9px;height:100%;
+    display:flex;align-items:center;font-weight:700}
+  @media(max-width:820px){.tools3{grid-template-columns:1fr}}
+
   /* flagship pre-deploy */
   .flagship{border:1px solid var(--line2);border-radius:22px;overflow:hidden;
     background:
@@ -269,6 +296,7 @@
     </a>
     <nav class="nav-links">
       <a href="#predeploy">Pre-deploy</a>
+      <a href="#fixes">Fixes</a>
       <a href="#features">Features</a>
       <a href="#how">How it works</a>
       <a href="#install">Install</a>
@@ -370,6 +398,49 @@
             <div class="vrow"><span class="k">exit    </span>0 &nbsp;→&nbsp; ship it 🚀</div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINDS AND FIXES -->
+<section id="fixes">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Beyond scanning</span>
+      <h2>It doesn't just find. It fixes.</h2>
+      <p>Most scanners hand you a list of problems. WebRecon hands you the fix,
+        watches while you code, and grades your security.</p>
+    </div>
+    <div class="tools3">
+      <div class="tool reveal">
+        <div class="th">
+          <div class="ic2"><svg viewBox="0 0 24 24" fill="none"><path d="M14.7 6.3a4 4 0 00-5.4 5.4l-6 6a2 2 0 102.8 2.8l6-6a4 4 0 005.4-5.4l-2.5 2.5-2.1-.4-.4-2.1 2.7-2.3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg></div>
+          <h3>Auto-remediation<span>webrecon fix</span></h3>
+        </div>
+        <p>Generates the exact config for your stack — nginx, Apache, Express,
+          Flask or Django — for missing headers, cookies, CORS, CSP and more.
+          Paste it in, or <code style="font-family:var(--mono)">--apply</code> it.</p>
+        <div class="tcmd"><b>webrecon fix</b> http://localhost:3000 --stack nginx</div>
+      </div>
+      <div class="tool reveal">
+        <div class="th">
+          <div class="ic2"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" stroke="currentColor" stroke-width="1.8"/></svg></div>
+          <h3>Live security linter<span>webrecon watch</span></h3>
+        </div>
+        <p>A test-watcher for vulnerabilities. Re-scans on an interval or the
+          moment you save a file, and shows only what's <b style="color:var(--text)">new</b>
+          or <b style="color:var(--text)">fixed</b> — feedback while you code.</p>
+        <div class="tcmd"><b>webrecon watch</b> --watch-dir ./src</div>
+      </div>
+      <div class="tool reveal">
+        <div class="th">
+          <div class="ic2"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg></div>
+          <h3>Security-grade badge<span>webrecon badge</span></h3>
+        </div>
+        <p>An A–F security grade as a shareable SVG for your README — generated
+          offline from the scan. Put it next to your build badge.</p>
+        <div class="badgevis"><span class="bl">security</span><span class="bv">A</span></div>
       </div>
     </div>
   </div>

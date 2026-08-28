@@ -289,6 +289,35 @@ webrecon predeploy --install-hook
 - **Git hook** — `--install-hook` adds a `pre-push` gate (bypass once with
   `git push --no-verify`).
 
+## Finds AND fixes — developer-first workflow
+
+WebRecon doesn't stop at reporting. These commands fit into how you actually
+build and ship:
+
+```bash
+# 🔧 Auto-remediation — generate ready-to-apply fixes for YOUR stack
+webrecon fix http://localhost:3000 --stack nginx      # or auto-detect the stack
+webrecon fix http://localhost:3000 --apply hardening.conf
+#   → nginx/apache/express/flask/django config for missing headers, cookies,
+#     CORS, CSP, directory listing, unsafe methods — paste it in and you're done.
+
+# 👀 Live security linter — re-scan as you code, see only what changed
+webrecon watch                          # auto-detects your dev server
+webrecon watch --watch-dir ./src        # re-scan the moment you save a file
+
+# 🏷️ Security-grade badge — a shareable SVG for your README
+webrecon badge http://localhost:3000 -o security.svg
+#   → grades A–F from the scan; embed ![Security](security.svg) in your README.
+```
+
+- **`fix`** — maps deterministic findings to exact config for the detected web
+  stack; print it or `--apply` it to a file. *Finds AND fixes.*
+- **`watch`** — a test-watcher for vulnerabilities: scans on an interval or on
+  file change and prints only NEW / FIXED findings, so you get security feedback
+  while coding.
+- **`badge`** — an A–F security grade as a shields-style SVG (offline, no
+  external service) plus the Markdown to embed it.
+
 ## Request / response inspection (ZAP-style)
 
 Every finding carries the **exact raw HTTP request and response** that produced

@@ -306,6 +306,56 @@ def _run_proxy(args) -> int:
                      mitm=args.mitm, console=console)
 
 
+def _run_fix(args) -> int:
+    console = Console()
+    from webrecon import remediate
+    from webrecon.core.target import parse_target, TargetError
+    try:
+        target = parse_target(args.url)
+    except TargetError as exc:
+        console.print(f"[red]Bad target:[/] {exc}")
+        return 2
+    loopback = target.host.lower() in ("localhost", "127.0.0.1", "::1")
+    if not (args.authorize or loopback):
+        console.print("[red]Pass --authorize (or target localhost).[/]")
+        return 3
+    console.print("[bold cyan]WebRecon · Auto-Remediation[/]")
+    cfg = Config()
+    cfg.local_scan = True
+    cfg.authorized = True
+    cfg.no_store = True
+    cfg.checks = ["headers", "cookies", "cors", "csp", "dirlisting", "methods",
+                  "webrecon", "infodisclosure"]
+    result = Engine(target, cfg, console=console).run()
+    config_text, n = remediate.generate(result, args.stack or "")
+    console.print()
+    if args.apply:
+        from pathlib import Path
+        out = Path(args.apply if isinstance(args.apply, str) else "webrecon-hardening.conf")
+        out.write_text(config_text + "\n", encoding="utf-8")
+        console.print(f"[green]Wrote {n} fix(es) → {out}[/]")
+    else:
+        console.print(config_text)
+        console.print(f"\n[green]{n} auto-fix(es) generated[/] "
+                      f"(stack: {args.stack or remediate.detect_stack(result)}). "
+                      "Use [bold]--apply <file>[/] to save.")
+    return 0
+
+
+def _run_badge(args) -> int:
+    console = Console()
+    from webrecon import badge
+    return badge.run_badge(args.url, args.output, console,
+                           authorize=args.authorize, db=args.db)
+
+
+def _run_watch(args) -> int:
+    console = Console()
+    from webrecon import watch
+    return watch.run_watch(args.url, console, interval=args.interval,
+                           watch_dir=args.watch_dir)
+
+
 def _run_predeploy(args) -> int:
     console = Console()
     from webrecon import predeploy
@@ -555,6 +605,37 @@ def build_parser() -> argparse.ArgumentParser:
     pd.add_argument("--install-hook", action="store_true",
                     help="Install a git pre-push hook that runs this gate")
     pd.set_defaults(func=_run_predeploy)
+
+    fix = sub.add_parser("fix",
+                         help="Scan and generate ready-to-apply fixes for your stack.")
+    fix.add_argument("url", help="Target URL")
+    fix.add_argument("--stack", choices=list(("nginx", "apache", "express",
+                     "flask", "django", "generic")), default=None,
+                     help="Web stack (auto-detected if omitted)")
+    fix.add_argument("--apply", nargs="?", const="webrecon-hardening.conf",
+                     default=None, help="Write the fixes to a file")
+    fix.add_argument("--authorize", action="store_true")
+    fix.set_defaults(func=_run_fix)
+
+    bdg = sub.add_parser("badge",
+                         help="Generate an SVG security-grade badge for your README.")
+    bdg.add_argument("url", nargs="?", default=None,
+                     help="Target URL (uses last scan from history if omitted)")
+    bdg.add_argument("-o", "--output", default="security-badge.svg",
+                     help="SVG output path")
+    bdg.add_argument("--db", default="webrecon.db", help="History DB path")
+    bdg.add_argument("--authorize", action="store_true")
+    bdg.set_defaults(func=_run_badge)
+
+    wat = sub.add_parser("watch",
+                         help="Live security linter — re-scan on change / interval.")
+    wat.add_argument("url", nargs="?", default=None,
+                     help="Local app URL (auto-detected if omitted)")
+    wat.add_argument("--interval", type=int, default=20,
+                     help="Seconds between scans (default 20)")
+    wat.add_argument("--watch-dir", default=None,
+                     help="Re-scan when files in this dir change")
+    wat.set_defaults(func=_run_watch)
 
     req = sub.add_parser("request", help="Send one HTTP request; show raw req+resp.")
     req.add_argument("url", help="Target URL")

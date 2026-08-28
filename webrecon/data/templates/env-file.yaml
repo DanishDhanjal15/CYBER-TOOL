@@ -1,0 +1,21 @@
+id: exposed-env-file
+info:
+  name: Exposed .env configuration file
+  severity: critical
+  description: A .env file with environment variables is publicly reachable.
+  impact: Database, cloud, and API credentials are often exposed in plaintext.
+  remediation: Remove .env from the web root and rotate any leaked secrets.
+  owasp: "A05:2021 - Security Misconfiguration"
+  cwe: CWE-538
+  cvss: 9.1
+requests:
+  - method: GET
+    path: ["/.env", "/.env.local", "/.env.production"]
+    matchers-condition: and
+    matchers:
+      - type: status
+        status: [200]
+      - type: regex
+        part: body
+        regex:
+          - '(?m)^[A-Z_][A-Z0-9_]*\s*='

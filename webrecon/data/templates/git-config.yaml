@@ -1,0 +1,24 @@
+id: exposed-git-config
+info:
+  name: Exposed .git/config repository file
+  severity: critical
+  description: The .git/config file is publicly reachable, exposing repository
+    metadata and enabling full source-history reconstruction.
+  impact: Full source code and secret history can be reconstructed.
+  remediation: Block access to the .git directory at the web server.
+  owasp: "A05:2021 - Security Misconfiguration"
+  cwe: CWE-538
+  cvss: 9.1
+  reference:
+    - https://owasp.org/www-project-web-security-testing-guide/
+requests:
+  - method: GET
+    path: ["/.git/config"]
+    matchers-condition: and
+    matchers:
+      - type: status
+        status: [200]
+      - type: word
+        part: body
+        condition: or
+        words: ["[core]", "[remote", "repositoryformatversion"]

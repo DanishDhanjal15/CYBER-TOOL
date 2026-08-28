@@ -1,0 +1,557 @@
+{
+  "target": "http://127.0.0.1:8099",
+  "started_at": "2026-08-28T08:24:04.269628+00:00",
+  "finished_at": "2026-08-28T08:24:10.462419+00:00",
+  "duration_seconds": 6.19,
+  "counts": {
+    "CRITICAL": 2,
+    "HIGH": 8,
+    "MEDIUM": 8,
+    "LOW": 6,
+    "INFO": 2
+  },
+  "recon": {
+    "dns": {
+      "host": "127.0.0.1",
+      "ip_addresses": [
+        "127.0.0.1"
+      ],
+      "records": {
+        "note": "target is an IP; skipping name records"
+      },
+      "reverse_dns": {
+        "127.0.0.1": "kubernetes.docker.internal"
+      }
+    },
+    "ports": {
+      "ip": "127.0.0.1",
+      "open_ports": {
+        "135": {
+          "service": "msrpc",
+          "banner": ""
+        },
+        "445": {
+          "service": "smb",
+          "banner": ""
+        },
+        "5432": {
+          "service": "postgres",
+          "banner": ""
+        },
+        "6379": {
+          "service": "redis",
+          "banner": ""
+        },
+        "27017": {
+          "service": "mongodb",
+          "banner": ""
+        }
+      },
+      "scanned": 33
+    },
+    "tls": {
+      "note": "target is not HTTPS; TLS checks skipped"
+    },
+    "fingerprint": {
+      "technologies": {
+        "Server header": "BaseHTTP/0.6 Python/3.11.9, VulnServer/1.2.3"
+      },
+      "headers": {
+        "Server": "BaseHTTP/0.6 Python/3.11.9, VulnServer/1.2.3",
+        "Date": "Fri, 28 Aug 2026 08:24:06 GMT",
+        "Content-Type": "text/html",
+        "Content-Length": "463",
+        "Set-Cookie": "SESSIONID=abc123, token=eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJ1c2VyIjoiYWRtaW4iLCJwYXNzd29yZCI6InAxMjMifQ."
+      },
+      "status": 200,
+      "title": "VulnApp",
+      "set_cookie_sample": "SESSIONID=abc123, token=eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJ1c2VyIjoiYWRtaW4iLCJwYXNzd29yZCI6InAxMjMifQ."
+    },
+    "files": {
+      "robots": "User-agent: *\nDisallow:",
+      "sitemap": null,
+      "exposed_files": [
+        ".env",
+        "robots.txt"
+      ]
+    }
+  },
+  "stats": {
+    "urls_crawled": 8,
+    "forms_found": 1,
+    "params_found": 5,
+    "requests_sent": 249,
+    "checks_run": 16
+  },
+  "findings": [
+    {
+      "id": "SQLI-001",
+      "title": "SQL injection (error-based) in 'id'",
+      "severity": "CRITICAL",
+      "owasp": "A03:2021 - Injection",
+      "cwe": "CWE-89",
+      "cvss": 9.8,
+      "location": "http://127.0.0.1:8099/item?id=1",
+      "description": "Injecting into 'id' produced a database error, indicating unsanitised input reaches an SQL query.",
+      "evidence": "payload=\"'\"; db-error marker='you have an error in your sql syntax'",
+      "impact": "Full read/modify access to the database; often leads to full system compromise.",
+      "remediation": "Use parameterised queries / prepared statements; never concatenate user input into SQL.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/89.html"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": "curl -i 'http://127.0.0.1:8099/item?id=%27'"
+    },
+    {
+      "id": "SSTI-001",
+      "title": "Server-side template injection in 'name'",
+      "severity": "CRITICAL",
+      "owasp": "A03:2021 - Injection",
+      "cwe": "CWE-1336",
+      "cvss": 9.8,
+      "location": "http://127.0.0.1:8099/render?name=guest",
+      "description": "Input in 'name' is evaluated by a server-side template engine (7*7 rendered as 49).",
+      "evidence": "payload='${7*7}' produced '49' in output",
+      "impact": "Template injection commonly escalates to remote code execution on the server.",
+      "remediation": "Never render user input as a template; use a sandboxed engine and pass data as context variables only.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/1336.html",
+        "https://portswigger.net/web-security/server-side-template-injection"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": "curl -i 'http://127.0.0.1:8099/render?name=%24%7B7%2A7%7D'"
+    },
+    {
+      "id": "FILE-001",
+      "title": "Sensitive file exposed: /.env",
+      "severity": "HIGH",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-538",
+      "cvss": 7.5,
+      "location": "http://127.0.0.1:8099/.env",
+      "description": "The path /.env is publicly reachable and returned HTTP 200.",
+      "evidence": "DB_PASSWORD=supersecret API_KEY=sk-live-123",
+      "impact": "May disclose credentials, source code, or configuration that aids further attacks.",
+      "remediation": "Remove the file from the web root or block access via server config; rotate any leaked secrets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/538.html"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": ""
+    },
+    {
+      "id": "JWT-001A",
+      "title": "JWT accepts 'alg: none' (unsigned token)",
+      "severity": "HIGH",
+      "owasp": "A02:2021 - Cryptographic Failures",
+      "cwe": "CWE-347",
+      "cvss": 8.1,
+      "location": "http://127.0.0.1:8099/",
+      "description": "A JWT uses the 'none' algorithm, meaning it is unsigned and can be forged.",
+      "evidence": "token=eyJhbGciOiJub25lIiwidHlw...; header alg=none",
+      "impact": "An attacker can forge arbitrary tokens (e.g. become any user / admin).",
+      "remediation": "Reject 'none'; pin a strong algorithm (e.g. RS256) and verify signatures server-side.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/347.html"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": "Decode/modify: eyJhbGciOiJub25lIiwidHlw..."
+    },
+    {
+      "id": "XSS-001",
+      "title": "Reflected XSS in 'q'",
+      "severity": "HIGH",
+      "owasp": "A03:2021 - Injection",
+      "cwe": "CWE-79",
+      "cvss": 6.1,
+      "location": "http://127.0.0.1:8099/search?q=hello",
+      "description": "Input in 'q' is reflected into the HTML response without encoding.",
+      "evidence": "payload='<wr9xzq>' reflected unencoded",
+      "impact": "An attacker can run arbitrary JavaScript in the victim's browser (session theft, defacement).",
+      "remediation": "Context-aware output encoding; validate input; add a Content-Security-Policy.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/79.html"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": "curl -i 'http://127.0.0.1:8099/search?q=%3Cwr9xzq%3E'"
+    },
+    {
+      "id": "XSS-002",
+      "title": "Reflected XSS in 'id'",
+      "severity": "HIGH",
+      "owasp": "A03:2021 - Injection",
+      "cwe": "CWE-79",
+      "cvss": 6.1,
+      "location": "http://127.0.0.1:8099/item?id=1",
+      "description": "Input in 'id' is reflected into the HTML response without encoding.",
+      "evidence": "payload='<wr9xzq>' reflected unencoded",
+      "impact": "An attacker can run arbitrary JavaScript in the victim's browser (session theft, defacement).",
+      "remediation": "Context-aware output encoding; validate input; add a Content-Security-Policy.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/79.html"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": "curl -i 'http://127.0.0.1:8099/item?id=%3Cwr9xzq%3E'"
+    },
+    {
+      "id": "XSS-003",
+      "title": "Reflected XSS in 'id'",
+      "severity": "HIGH",
+      "owasp": "A03:2021 - Injection",
+      "cwe": "CWE-79",
+      "cvss": 6.1,
+      "location": "http://127.0.0.1:8099/profile?id=1000",
+      "description": "Input in 'id' is reflected into the HTML response without encoding.",
+      "evidence": "payload='<wr9xzq>' reflected unencoded",
+      "impact": "An attacker can run arbitrary JavaScript in the victim's browser (session theft, defacement).",
+      "remediation": "Context-aware output encoding; validate input; add a Content-Security-Policy.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/79.html"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": "curl -i 'http://127.0.0.1:8099/profile?id=%3Cwr9xzq%3E'"
+    },
+    {
+      "id": "XSS-004",
+      "title": "Reflected XSS in 'name'",
+      "severity": "HIGH",
+      "owasp": "A03:2021 - Injection",
+      "cwe": "CWE-79",
+      "cvss": 6.1,
+      "location": "http://127.0.0.1:8099/render?name=guest",
+      "description": "Input in 'name' is reflected into the HTML response without encoding.",
+      "evidence": "payload='<wr9xzq>' reflected unencoded",
+      "impact": "An attacker can run arbitrary JavaScript in the victim's browser (session theft, defacement).",
+      "remediation": "Context-aware output encoding; validate input; add a Content-Security-Policy.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/79.html"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": "curl -i 'http://127.0.0.1:8099/render?name=%3Cwr9xzq%3E'"
+    },
+    {
+      "id": "XSS-005",
+      "title": "Reflected XSS in 'url'",
+      "severity": "HIGH",
+      "owasp": "A03:2021 - Injection",
+      "cwe": "CWE-79",
+      "cvss": 6.1,
+      "location": "http://127.0.0.1:8099/fetch?url=http://example.com",
+      "description": "Input in 'url' is reflected into the HTML response without encoding.",
+      "evidence": "payload='<wr9xzq>' reflected unencoded",
+      "impact": "An attacker can run arbitrary JavaScript in the victim's browser (session theft, defacement).",
+      "remediation": "Context-aware output encoding; validate input; add a Content-Security-Policy.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/79.html"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": "curl -i 'http://127.0.0.1:8099/fetch?url=%3Cwr9xzq%3E'"
+    },
+    {
+      "id": "SSRF-001",
+      "title": "Server-side request forgery in 'url'",
+      "severity": "HIGH",
+      "owasp": "A10:2021 - Server-Side Request Forgery",
+      "cwe": "CWE-918",
+      "cvss": 8.6,
+      "location": "http://127.0.0.1:8099/fetch?url=http://example.com",
+      "description": "The 'url' parameter made the server fetch an internal URL; the response contained internal-only content.",
+      "evidence": "payload='http://169.254.169.254/latest/meta-data/'; internal signal='ami-id'",
+      "impact": "Read cloud metadata/credentials, reach internal services, and pivot into the internal network.",
+      "remediation": "Allowlist outbound hosts/schemes; block link-local/private ranges; do not let user input control server-side fetch targets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/918.html"
+      ],
+      "confidence": "PROBABLE",
+      "poc": "curl -i 'http://127.0.0.1:8099/fetch?url=http%3A%2F%2F169.254.169.254%2Flatest%2Fmeta-data%2F'"
+    },
+    {
+      "id": "FILE-001",
+      "title": "Sensitive file exposed: /robots.txt",
+      "severity": "MEDIUM",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-538",
+      "cvss": 5.3,
+      "location": "http://127.0.0.1:8099/robots.txt",
+      "description": "The path /robots.txt is publicly reachable and returned HTTP 200.",
+      "evidence": "User-agent: * Disallow:",
+      "impact": "May disclose configuration or metadata useful to an attacker.",
+      "remediation": "Remove the file from the web root or block access via server config; rotate any leaked secrets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/538.html"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": ""
+    },
+    {
+      "id": "SEC-HEADERS-001",
+      "title": "Missing Content-Security-Policy",
+      "severity": "MEDIUM",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-693",
+      "cvss": 4.0,
+      "location": "http://127.0.0.1:8099/",
+      "description": "The response is missing the 'content-security-policy' header.",
+      "evidence": "Response headers: content-length, content-type, date, server, set-cookie",
+      "impact": "Without CSP, injected scripts run freely, worsening XSS impact.",
+      "remediation": "Add a restrictive Content-Security-Policy header.",
+      "references": [
+        "https://owasp.org/www-project-secure-headers/"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": ""
+    },
+    {
+      "id": "SEC-HEADERS-002",
+      "title": "Missing Strict-Transport-Security (HSTS)",
+      "severity": "MEDIUM",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-693",
+      "cvss": 4.0,
+      "location": "http://127.0.0.1:8099/",
+      "description": "The response is missing the 'strict-transport-security' header.",
+      "evidence": "Response headers: content-length, content-type, date, server, set-cookie",
+      "impact": "Users can be downgraded to HTTP and have traffic intercepted.",
+      "remediation": "Add 'Strict-Transport-Security: max-age=31536000; includeSubDomains'.",
+      "references": [
+        "https://owasp.org/www-project-secure-headers/"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": ""
+    },
+    {
+      "id": "DIRLIST-003",
+      "title": "Directory listing enabled: /uploads/",
+      "severity": "MEDIUM",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-548",
+      "cvss": 5.3,
+      "location": "http://127.0.0.1:8099/uploads/",
+      "description": "The directory /uploads/ returns an auto-generated file index.",
+      "evidence": "<html><head><title>index of /uploads</title></head><body><h1>index of /uploads</h1><a href='a.txt'>a.txt</a></body></html>",
+      "impact": "Attackers can browse and download files not meant to be listed (backups, source, uploads).",
+      "remediation": "Disable auto-indexing (e.g. 'Options -Indexes' on Apache; 'autoindex off' on nginx).",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/548.html"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": ""
+    },
+    {
+      "id": "JWT-001C",
+      "title": "JWT payload contains sensitive claim(s)",
+      "severity": "MEDIUM",
+      "owasp": "A02:2021 - Cryptographic Failures",
+      "cwe": "CWE-312",
+      "cvss": 5.3,
+      "location": "http://127.0.0.1:8099/",
+      "description": "JWT payloads are only base64-encoded (not encrypted); sensitive fields are readable.",
+      "evidence": "sensitive claim(s): password",
+      "impact": "Anyone who sees the token can read the sensitive values it carries.",
+      "remediation": "Never put secrets in a JWT payload; store server-side and reference by id.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/312.html"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": ""
+    },
+    {
+      "id": "CSRF-001",
+      "title": "POST form without anti-CSRF token",
+      "severity": "MEDIUM",
+      "owasp": "A01:2021 - Broken Access Control",
+      "cwe": "CWE-352",
+      "cvss": 5.4,
+      "location": "http://127.0.0.1:8099/login",
+      "description": "A state-changing form has no hidden CSRF token field.",
+      "evidence": "fields: username, password",
+      "impact": "An attacker page can submit this form on behalf of a logged-in victim.",
+      "remediation": "Add a per-session/per-request CSRF token and verify it server-side; use SameSite cookies.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/352.html"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": ""
+    },
+    {
+      "id": "IDOR-001",
+      "title": "Possible IDOR on 'id'",
+      "severity": "MEDIUM",
+      "owasp": "A01:2021 - Broken Access Control",
+      "cwe": "CWE-639",
+      "cvss": 6.5,
+      "location": "http://127.0.0.1:8099/item?id=1",
+      "description": "Changing 'id' from 1 to 2 returned a different valid resource with no visible access-control barrier.",
+      "evidence": "id=1 and id=2 both HTTP 200 with distinct, similarly-structured bodies",
+      "impact": "If these objects belong to other users, an attacker can enumerate and read/modify their data.",
+      "remediation": "Enforce per-object authorization server-side; verify the current user owns the requested object. Consider unguessable identifiers.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/639.html"
+      ],
+      "confidence": "POTENTIAL",
+      "poc": "curl -i 'http://127.0.0.1:8099/item?id=2'"
+    },
+    {
+      "id": "IDOR-002",
+      "title": "Possible IDOR on 'id'",
+      "severity": "MEDIUM",
+      "owasp": "A01:2021 - Broken Access Control",
+      "cwe": "CWE-639",
+      "cvss": 6.5,
+      "location": "http://127.0.0.1:8099/profile?id=1000",
+      "description": "Changing 'id' from 1000 to 1001 returned a different valid resource with no visible access-control barrier.",
+      "evidence": "id=1000 and id=1001 both HTTP 200 with distinct, similarly-structured bodies",
+      "impact": "If these objects belong to other users, an attacker can enumerate and read/modify their data.",
+      "remediation": "Enforce per-object authorization server-side; verify the current user owns the requested object. Consider unguessable identifiers.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/639.html"
+      ],
+      "confidence": "POTENTIAL",
+      "poc": "curl -i 'http://127.0.0.1:8099/profile?id=1001'"
+    },
+    {
+      "id": "SEC-HEADERS-003",
+      "title": "Missing X-Frame-Options",
+      "severity": "LOW",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-693",
+      "cvss": 2.0,
+      "location": "http://127.0.0.1:8099/",
+      "description": "The response is missing the 'x-frame-options' header.",
+      "evidence": "Response headers: content-length, content-type, date, server, set-cookie",
+      "impact": "The page can be framed, enabling clickjacking.",
+      "remediation": "Add 'X-Frame-Options: DENY' or a CSP frame-ancestors directive.",
+      "references": [
+        "https://owasp.org/www-project-secure-headers/"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": ""
+    },
+    {
+      "id": "SEC-HEADERS-004",
+      "title": "Missing X-Content-Type-Options",
+      "severity": "LOW",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-693",
+      "cvss": 2.0,
+      "location": "http://127.0.0.1:8099/",
+      "description": "The response is missing the 'x-content-type-options' header.",
+      "evidence": "Response headers: content-length, content-type, date, server, set-cookie",
+      "impact": "Browsers may MIME-sniff responses, enabling some attacks.",
+      "remediation": "Add 'X-Content-Type-Options: nosniff'.",
+      "references": [
+        "https://owasp.org/www-project-secure-headers/"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": ""
+    },
+    {
+      "id": "SEC-HEADERS-005",
+      "title": "Missing Referrer-Policy",
+      "severity": "LOW",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-693",
+      "cvss": 2.0,
+      "location": "http://127.0.0.1:8099/",
+      "description": "The response is missing the 'referrer-policy' header.",
+      "evidence": "Response headers: content-length, content-type, date, server, set-cookie",
+      "impact": "Full URLs may leak to third parties via the Referer header.",
+      "remediation": "Add 'Referrer-Policy: strict-origin-when-cross-origin'.",
+      "references": [
+        "https://owasp.org/www-project-secure-headers/"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": ""
+    },
+    {
+      "id": "COOKIE-001",
+      "title": "Cookie 'SESSIONID' missing flags: HttpOnly, SameSite",
+      "severity": "LOW",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-1004",
+      "cvss": 3.5,
+      "location": "http://127.0.0.1:8099/",
+      "description": "Set-Cookie for 'SESSIONID' lacks: HttpOnly, SameSite.",
+      "evidence": "SESSIONID=abc123",
+      "impact": "Session cookies may be stolen via XSS or sent over plaintext / cross-site requests.",
+      "remediation": "Set HttpOnly, Secure (on HTTPS), and an explicit SameSite attribute on session cookies.",
+      "references": [
+        "https://owasp.org/www-community/controls/SecureCookieAttribute"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": ""
+    },
+    {
+      "id": "COOKIE-002",
+      "title": "Cookie 'token' missing flags: HttpOnly, SameSite",
+      "severity": "LOW",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-1004",
+      "cvss": 3.5,
+      "location": "http://127.0.0.1:8099/",
+      "description": "Set-Cookie for 'token' lacks: HttpOnly, SameSite.",
+      "evidence": "token=eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJ1c2VyIjoiYWRtaW4iLCJwYXNzd29yZCI6InAxMjMifQ.",
+      "impact": "Session cookies may be stolen via XSS or sent over plaintext / cross-site requests.",
+      "remediation": "Set HttpOnly, Secure (on HTTPS), and an explicit SameSite attribute on session cookies.",
+      "references": [
+        "https://owasp.org/www-community/controls/SecureCookieAttribute"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": ""
+    },
+    {
+      "id": "JWT-001B",
+      "title": "JWT has no expiry ('exp') claim",
+      "severity": "LOW",
+      "owasp": "A02:2021 - Cryptographic Failures",
+      "cwe": "CWE-613",
+      "cvss": 3.7,
+      "location": "http://127.0.0.1:8099/",
+      "description": "A JWT lacks an 'exp' claim and never expires.",
+      "evidence": "token=eyJhbGciOiJub25lIiwidHlw...; claims=['user', 'password']",
+      "impact": "A stolen token remains valid indefinitely.",
+      "remediation": "Add short-lived 'exp' and rotate/refresh tokens.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/613.html"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": ""
+    },
+    {
+      "id": "SEC-HEADERS-006",
+      "title": "Missing Permissions-Policy",
+      "severity": "INFO",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-693",
+      "cvss": 2.0,
+      "location": "http://127.0.0.1:8099/",
+      "description": "The response is missing the 'permissions-policy' header.",
+      "evidence": "Response headers: content-length, content-type, date, server, set-cookie",
+      "impact": "Powerful browser features are not explicitly restricted.",
+      "remediation": "Add a Permissions-Policy header disabling unused features.",
+      "references": [
+        "https://owasp.org/www-project-secure-headers/"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": ""
+    },
+    {
+      "id": "INFO-001",
+      "title": "Software version disclosed in 'Server' header",
+      "severity": "INFO",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-200",
+      "cvss": 0.0,
+      "location": "http://127.0.0.1:8099/",
+      "description": "The 'Server' header reveals a version: BaseHTTP/0.6 Python/3.11.9, VulnServer/1.2.3.",
+      "evidence": "Server: BaseHTTP/0.6 Python/3.11.9, VulnServer/1.2.3",
+      "impact": "Version info helps attackers match known CVEs.",
+      "remediation": "Suppress or genericise version banners.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/200.html"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": ""
+    }
+  ]
+}

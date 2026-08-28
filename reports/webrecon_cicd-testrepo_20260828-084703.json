@@ -1,0 +1,130 @@
+{
+  "target": "cicd://C:\\Users\\Danish\\AppData\\Local\\Temp\\claude\\C--Users-Danish-OneDrive-Desktop-tool\\c1ddd831-9d1c-4c1f-867a-da2e1dbee1aa\\scratchpad\\testrepo",
+  "started_at": "2026-08-28T08:47:03.062868+00:00",
+  "finished_at": "2026-08-28T08:47:03.066889+00:00",
+  "duration_seconds": 0.0,
+  "counts": {
+    "CRITICAL": 1,
+    "HIGH": 3,
+    "MEDIUM": 2,
+    "LOW": 0,
+    "INFO": 0
+  },
+  "recon": {},
+  "stats": {
+    "files_scanned": 1,
+    "platforms": [
+      "github"
+    ]
+  },
+  "findings": [
+    {
+      "id": "CICD-PRT-001",
+      "title": "pull_request_target checks out untrusted PR code",
+      "severity": "CRITICAL",
+      "owasp": "CI/CD-SEC-4 - Poisoned Pipeline",
+      "cwe": "CWE-829",
+      "cvss": 9.3,
+      "location": "C:\\Users\\Danish\\AppData\\Local\\Temp\\claude\\C--Users-Danish-OneDrive-Desktop-tool\\c1ddd831-9d1c-4c1f-867a-da2e1dbee1aa\\scratchpad\\testrepo\\.github\\workflows\\ci.yml",
+      "description": "A workflow triggered by 'pull_request_target' (which runs with repo secrets and a write token) also checks out the pull request's head. Attacker-controlled code then runs with access to secrets.",
+      "evidence": "pull_request_target + actions/checkout of PR head",
+      "impact": "A malicious PR can exfiltrate all repository secrets and push to the repo (full supply-chain compromise).",
+      "remediation": "Use 'pull_request' for untrusted code, or check out the base ref only and never build/run PR code in a privileged context.",
+      "references": [
+        "https://securitylab.github.com/resources/github-actions-preventing-pwn-requests/"
+      ],
+      "confidence": "PROBABLE",
+      "poc": "# Patch: split trusted/untrusted work\non: pull_request        # not pull_request_target\npermissions:\n  contents: read\n# If you must use pull_request_target, do NOT checkout PR head\n# and never run its scripts with secrets present."
+    },
+    {
+      "id": "CICD-INJ-001",
+      "title": "Script injection via untrusted github.event data",
+      "severity": "HIGH",
+      "owasp": "CI/CD-SEC-4 - Poisoned Pipeline",
+      "cwe": "CWE-94",
+      "cvss": 8.8,
+      "location": "C:\\Users\\Danish\\AppData\\Local\\Temp\\claude\\C--Users-Danish-OneDrive-Desktop-tool\\c1ddd831-9d1c-4c1f-867a-da2e1dbee1aa\\scratchpad\\testrepo\\.github\\workflows\\ci.yml:13",
+      "description": "Untrusted event data is interpolated directly into a shell command; an attacker controls that value.",
+      "evidence": "${{ github.event.pull_request.title }}",
+      "impact": "Arbitrary command execution on the runner with access to the job's secrets and token.",
+      "remediation": "Never inline ${{ github.event.* }} into run steps. Pass it through an environment variable and reference it quoted.",
+      "references": [
+        "https://docs.github.com/actions/security-guides/security-hardening-for-github-actions"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": "# Patch: bind to env, then use the quoted variable\n  - env:\n      TITLE: ${{ github.event.issue.title }}\n    run: echo \"$TITLE\""
+    },
+    {
+      "id": "CICD-PIN-001",
+      "title": "Third-party action not pinned to a commit SHA: some/action@main",
+      "severity": "HIGH",
+      "owasp": "CI/CD-SEC-3 - Dependency Chain Abuse",
+      "cwe": "CWE-1357",
+      "cvss": 6.5,
+      "location": "C:\\Users\\Danish\\AppData\\Local\\Temp\\claude\\C--Users-Danish-OneDrive-Desktop-tool\\c1ddd831-9d1c-4c1f-867a-da2e1dbee1aa\\scratchpad\\testrepo\\.github\\workflows\\ci.yml:11",
+      "description": "The action is referenced by a mutable tag/branch. If that tag is moved (or the action is compromised), malicious code runs in your pipeline.",
+      "evidence": "uses: some/action@main",
+      "impact": "Supply-chain compromise: the action author (or an attacker who hijacks the tag) can run code with your secrets.",
+      "remediation": "Pin third-party actions to a full commit SHA and review updates via Dependabot.",
+      "references": [
+        "https://docs.github.com/actions/security-guides/security-hardening-for-github-actions#using-third-party-actions"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": "# Patch: pin to an immutable SHA\n  uses: some/action@<full-40-char-commit-sha>  # was @main"
+    },
+    {
+      "id": "CICD-SEC-001",
+      "title": "Secret printed to build logs",
+      "severity": "HIGH",
+      "owasp": "CI/CD-SEC-6 - Insufficient Logging",
+      "cwe": "CWE-532",
+      "cvss": 7.5,
+      "location": "C:\\Users\\Danish\\AppData\\Local\\Temp\\claude\\C--Users-Danish-OneDrive-Desktop-tool\\c1ddd831-9d1c-4c1f-867a-da2e1dbee1aa\\scratchpad\\testrepo\\.github\\workflows\\ci.yml:17",
+      "description": "A step echoes a secret; build logs are often broadly readable and archived.",
+      "evidence": "echo \"token is ${{ secrets.",
+      "impact": "The secret is exposed to anyone who can read pipeline logs.",
+      "remediation": "Never print secrets. Use masked env vars and remove debug echoes.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/532.html"
+      ],
+      "confidence": "PROBABLE",
+      "poc": "# Remove the echo; pass the secret only as an env var to the tool\n  env:\n    TOKEN: ${{ secrets.TOKEN }}"
+    },
+    {
+      "id": "CICD-PERM-001",
+      "title": "Workflow token granted write-all permissions",
+      "severity": "MEDIUM",
+      "owasp": "CI/CD-SEC-5 - Insufficient PBAC",
+      "cwe": "CWE-250",
+      "cvss": 5.4,
+      "location": "C:\\Users\\Danish\\AppData\\Local\\Temp\\claude\\C--Users-Danish-OneDrive-Desktop-tool\\c1ddd831-9d1c-4c1f-867a-da2e1dbee1aa\\scratchpad\\testrepo\\.github\\workflows\\ci.yml",
+      "description": "The GITHUB_TOKEN is granted broad write permissions; any compromised step can abuse them.",
+      "evidence": "permissions: write-all",
+      "impact": "A compromised step can push code, publish packages, or alter the repo.",
+      "remediation": "Apply least privilege: default to 'contents: read' and grant only the specific scopes a job needs.",
+      "references": [
+        "https://docs.github.com/actions/security-guides/automatic-token-authentication"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": "# Patch: least-privilege token\npermissions:\n  contents: read"
+    },
+    {
+      "id": "CICD-RCE-001",
+      "title": "Remote script piped straight into a shell",
+      "severity": "MEDIUM",
+      "owasp": "CI/CD-SEC-3 - Dependency Chain Abuse",
+      "cwe": "CWE-494",
+      "cvss": 6.3,
+      "location": "C:\\Users\\Danish\\AppData\\Local\\Temp\\claude\\C--Users-Danish-OneDrive-Desktop-tool\\c1ddd831-9d1c-4c1f-867a-da2e1dbee1aa\\scratchpad\\testrepo\\.github\\workflows\\ci.yml:15",
+      "description": "A pipeline step downloads a script and executes it immediately; the remote content is unverified and can change at any time.",
+      "evidence": "curl -sSL https://get.example.com/install.sh | bash",
+      "impact": "If the remote host or content is tampered with, arbitrary code runs in the pipeline.",
+      "remediation": "Download to a file, verify a pinned checksum/signature, then execute.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/494.html"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": "# Patch: verify before executing\ncurl -fsSL https://host/install.sh -o install.sh\necho '<sha256>  install.sh' | sha256sum -c -\nbash install.sh"
+    }
+  ]
+}

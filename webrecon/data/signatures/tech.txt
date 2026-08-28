@@ -1,0 +1,9 @@
+Server|server|Server header
+X-Powered-By|x-powered-by|Backend technology
+X-AspNet-Version|x-aspnet-version|ASP.NET version
+X-AspNetMvc-Version|x-aspnetmvc-version|ASP.NET MVC version
+X-Generator|x-generator|Generator
+X-Drupal-Cache|x-drupal-cache|Drupal
+X-Runtime|x-runtime|Ruby on Rails
+Via|via|Proxy/CDN
+X-Served-By|x-served-by|CDN/cache node

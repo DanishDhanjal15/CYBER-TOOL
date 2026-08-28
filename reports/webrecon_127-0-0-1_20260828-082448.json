@@ -1,0 +1,216 @@
+{
+  "target": "http://127.0.0.1:8099",
+  "started_at": "2026-08-28T08:24:44.756216+00:00",
+  "finished_at": "2026-08-28T08:24:48.534531+00:00",
+  "duration_seconds": 3.78,
+  "counts": {
+    "CRITICAL": 3,
+    "HIGH": 3,
+    "MEDIUM": 1,
+    "LOW": 0,
+    "INFO": 0
+  },
+  "recon": {
+    "dns": {
+      "host": "127.0.0.1",
+      "ip_addresses": [
+        "127.0.0.1"
+      ],
+      "records": {
+        "note": "target is an IP; skipping name records"
+      },
+      "reverse_dns": {
+        "127.0.0.1": "kubernetes.docker.internal"
+      }
+    },
+    "ports": {
+      "ip": "127.0.0.1",
+      "open_ports": {
+        "135": {
+          "service": "msrpc",
+          "banner": ""
+        },
+        "445": {
+          "service": "smb",
+          "banner": ""
+        },
+        "5432": {
+          "service": "postgres",
+          "banner": ""
+        },
+        "6379": {
+          "service": "redis",
+          "banner": ""
+        },
+        "27017": {
+          "service": "mongodb",
+          "banner": ""
+        }
+      },
+      "scanned": 33
+    },
+    "tls": {
+      "note": "target is not HTTPS; TLS checks skipped"
+    },
+    "fingerprint": {
+      "technologies": {
+        "Server header": "BaseHTTP/0.6 Python/3.11.9, VulnServer/1.2.3"
+      },
+      "headers": {
+        "Server": "BaseHTTP/0.6 Python/3.11.9, VulnServer/1.2.3",
+        "Date": "Fri, 28 Aug 2026 08:24:47 GMT",
+        "Content-Type": "text/html",
+        "Content-Length": "463",
+        "Set-Cookie": "SESSIONID=abc123, token=eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJ1c2VyIjoiYWRtaW4iLCJwYXNzd29yZCI6InAxMjMifQ."
+      },
+      "status": 200,
+      "title": "VulnApp",
+      "set_cookie_sample": "SESSIONID=abc123, token=eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJ1c2VyIjoiYWRtaW4iLCJwYXNzd29yZCI6InAxMjMifQ."
+    },
+    "files": {
+      "robots": "User-agent: *\nDisallow:",
+      "sitemap": null,
+      "exposed_files": [
+        ".env",
+        "robots.txt"
+      ]
+    }
+  },
+  "stats": {
+    "urls_crawled": 9,
+    "forms_found": 1,
+    "params_found": 7,
+    "requests_sent": 181,
+    "checks_run": 3
+  },
+  "findings": [
+    {
+      "id": "SQLI-001",
+      "title": "SQL injection (error-based) in 'id'",
+      "severity": "CRITICAL",
+      "owasp": "A03:2021 - Injection",
+      "cwe": "CWE-89",
+      "cvss": 9.8,
+      "location": "http://127.0.0.1:8099/item?id=1",
+      "description": "Injecting into 'id' produced a database error, indicating unsanitised input reaches an SQL query.",
+      "evidence": "payload=\"'\"; db-error marker='you have an error in your sql syntax'",
+      "impact": "Full read/modify access to the database; often leads to full system compromise.",
+      "remediation": "Use parameterised queries / prepared statements; never concatenate user input into SQL.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/89.html"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": "curl -i 'http://127.0.0.1:8099/item?id=%27'"
+    },
+    {
+      "id": "SSTI-001",
+      "title": "Server-side template injection in 'name'",
+      "severity": "CRITICAL",
+      "owasp": "A03:2021 - Injection",
+      "cwe": "CWE-1336",
+      "cvss": 9.8,
+      "location": "http://127.0.0.1:8099/render?name=guest",
+      "description": "Input in 'name' is evaluated by a server-side template engine (7*7 rendered as 49).",
+      "evidence": "payload='${7*7}' produced '49' in output",
+      "impact": "Template injection commonly escalates to remote code execution on the server.",
+      "remediation": "Never render user input as a template; use a sandboxed engine and pass data as context variables only.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/1336.html",
+        "https://portswigger.net/web-security/server-side-template-injection"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": "curl -i 'http://127.0.0.1:8099/render?name=%24%7B7%2A7%7D'"
+    },
+    {
+      "id": "SSTI-002",
+      "title": "Server-side template injection in 'name'",
+      "severity": "CRITICAL",
+      "owasp": "A03:2021 - Injection",
+      "cwe": "CWE-1336",
+      "cvss": 9.8,
+      "location": "http://127.0.0.1:8099/render?name=1",
+      "description": "Input in 'name' is evaluated by a server-side template engine (7*7 rendered as 49).",
+      "evidence": "payload='${7*7}' produced '49' in output",
+      "impact": "Template injection commonly escalates to remote code execution on the server.",
+      "remediation": "Never render user input as a template; use a sandboxed engine and pass data as context variables only.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/1336.html",
+        "https://portswigger.net/web-security/server-side-template-injection"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": "curl -i 'http://127.0.0.1:8099/render?name=%24%7B7%2A7%7D'"
+    },
+    {
+      "id": "FILE-001",
+      "title": "Sensitive file exposed: /.env",
+      "severity": "HIGH",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-538",
+      "cvss": 7.5,
+      "location": "http://127.0.0.1:8099/.env",
+      "description": "The path /.env is publicly reachable and returned HTTP 200.",
+      "evidence": "DB_PASSWORD=supersecret API_KEY=sk-live-123",
+      "impact": "May disclose credentials, source code, or configuration that aids further attacks.",
+      "remediation": "Remove the file from the web root or block access via server config; rotate any leaked secrets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/538.html"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": ""
+    },
+    {
+      "id": "SSRF-001",
+      "title": "Server-side request forgery in 'url'",
+      "severity": "HIGH",
+      "owasp": "A10:2021 - Server-Side Request Forgery",
+      "cwe": "CWE-918",
+      "cvss": 8.6,
+      "location": "http://127.0.0.1:8099/fetch?url=http://example.com",
+      "description": "The 'url' parameter made the server fetch an internal URL; the response contained internal-only content.",
+      "evidence": "payload='http://169.254.169.254/latest/meta-data/'; internal signal='ami-id'",
+      "impact": "Read cloud metadata/credentials, reach internal services, and pivot into the internal network.",
+      "remediation": "Allowlist outbound hosts/schemes; block link-local/private ranges; do not let user input control server-side fetch targets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/918.html"
+      ],
+      "confidence": "PROBABLE",
+      "poc": "curl -i 'http://127.0.0.1:8099/fetch?url=http%3A%2F%2F169.254.169.254%2Flatest%2Fmeta-data%2F'"
+    },
+    {
+      "id": "SSRF-002",
+      "title": "Server-side request forgery in 'url'",
+      "severity": "HIGH",
+      "owasp": "A10:2021 - Server-Side Request Forgery",
+      "cwe": "CWE-918",
+      "cvss": 8.6,
+      "location": "http://127.0.0.1:8099/fetch?url=1",
+      "description": "The 'url' parameter made the server fetch an internal URL; the response contained internal-only content.",
+      "evidence": "payload='http://169.254.169.254/latest/meta-data/'; internal signal='ami-id'",
+      "impact": "Read cloud metadata/credentials, reach internal services, and pivot into the internal network.",
+      "remediation": "Allowlist outbound hosts/schemes; block link-local/private ranges; do not let user input control server-side fetch targets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/918.html"
+      ],
+      "confidence": "PROBABLE",
+      "poc": "curl -i 'http://127.0.0.1:8099/fetch?url=http%3A%2F%2F169.254.169.254%2Flatest%2Fmeta-data%2F'"
+    },
+    {
+      "id": "FILE-001",
+      "title": "Sensitive file exposed: /robots.txt",
+      "severity": "MEDIUM",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-538",
+      "cvss": 5.3,
+      "location": "http://127.0.0.1:8099/robots.txt",
+      "description": "The path /robots.txt is publicly reachable and returned HTTP 200.",
+      "evidence": "User-agent: * Disallow:",
+      "impact": "May disclose configuration or metadata useful to an attacker.",
+      "remediation": "Remove the file from the web root or block access via server config; rotate any leaked secrets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/538.html"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": ""
+    }
+  ]
+}

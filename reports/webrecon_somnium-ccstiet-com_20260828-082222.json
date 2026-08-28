@@ -1,0 +1,693 @@
+{
+  "target": "https://somnium.ccstiet.com",
+  "started_at": "2026-08-28T08:22:06.628352+00:00",
+  "finished_at": "2026-08-28T08:22:22.293090+00:00",
+  "duration_seconds": 15.67,
+  "counts": {
+    "CRITICAL": 0,
+    "HIGH": 12,
+    "MEDIUM": 21,
+    "LOW": 1,
+    "INFO": 0
+  },
+  "recon": {
+    "dns": {
+      "host": "somnium.ccstiet.com",
+      "ip_addresses": [
+        "104.21.25.150",
+        "172.67.134.84"
+      ],
+      "records": {
+        "A": [
+          "104.21.25.150",
+          "172.67.134.84"
+        ],
+        "AAAA": [
+          "2606:4700:3032::ac43:8654",
+          "2606:4700:3031::6815:1996"
+        ]
+      },
+      "reverse_dns": {
+        "104.21.25.150": null,
+        "172.67.134.84": null
+      }
+    },
+    "ports": {
+      "ip": "104.21.25.150",
+      "open_ports": {
+        "80": {
+          "service": "http",
+          "banner": ""
+        },
+        "443": {
+          "service": "https",
+          "banner": ""
+        },
+        "8080": {
+          "service": "http-proxy",
+          "banner": ""
+        },
+        "8443": {
+          "service": "https-alt",
+          "banner": ""
+        }
+      },
+      "scanned": 33
+    },
+    "tls": {
+      "host": "somnium.ccstiet.com",
+      "port": 443,
+      "protocol": "TLSv1.3",
+      "verified": true,
+      "subject": "ccstiet.com",
+      "issuer": "WE1",
+      "not_after": "Oct 12 09:46:14 2026 GMT",
+      "days_to_expiry": 45
+    },
+    "fingerprint": {
+      "technologies": {
+        "Server header": "cloudflare"
+      },
+      "headers": {
+        "Date": "Fri, 28 Aug 2026 08:22:19 GMT",
+        "Content-Type": "text/html; charset=utf-8",
+        "Transfer-Encoding": "chunked",
+        "Connection": "keep-alive",
+        "access-control-allow-origin": "*",
+        "Age": "135379",
+        "Cache-Control": "public, max-age=0, must-revalidate",
+        "content-disposition": "inline",
+        "Nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+        "content-security-policy-report-only": "default-src 'self'; img-src * data:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src *;",
+        "Report-To": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=uijft7IqPqXbll544lq%2BzZDDFqL0zp%2FC6KSyAdR%2BdvjxLepJJTBUs%2BwaP%2Bu5PXUPlM0HvMvrmYVS6pKA2B0i024zSMtUJ8T8FTsFYJK2CURtyKD3IexLraJVlqNRp8W%2BozAnP9JZ\"}]}",
+        "last-modified": "Wed, 26 Aug 2026 18:45:59 GMT",
+        "permissions-policy": "camera=(), microphone=(), geolocation=()",
+        "referrer-policy": "strict-origin-when-cross-origin",
+        "Server": "cloudflare",
+        "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "DENY",
+        "x-vercel-cache": "HIT",
+        "x-vercel-id": "bom1::pz9rx-1787905339688-f3331657a7b0",
+        "cf-cache-status": "DYNAMIC",
+        "vary": "accept-encoding",
+        "Content-Encoding": "br",
+        "CF-RAY": "a321e8544d7ac1c5-DEL",
+        "alt-svc": "h3=\":443\"; ma=86400"
+      },
+      "status": 200,
+      "title": "Somnium \u2014 Dream. Decode. Escape."
+    },
+    "files": {
+      "robots": "<!doctype html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>Somnium &mdash; Dream. Decode. Escape.</title>\n    <meta name=\"description\" content=\"Somnium: a capture-the-flag competition presented by CCS \u00d7 FROSH. Dream. Decode. Escape. Register your team now.\" />\n    <link rel=\"icon\" type=\"image/png\" href=\"/assets/somniumLogo-C5TSY8R9.png\" />\n    <link rel=\"preconnect\" href=\"https://fonts.googleapis.com\" />\n    <link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin />\n    <link\n      href=\"https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Oswald:wght@400;500;600;700&display=swap\"\n      rel=\"stylesheet\"\n    />\n    <script type=\"module\" crossorigin src=\"/assets/index-fBOjIakl.js\"></script>\n    <link rel=\"stylesheet\" crossorigin href=\"/assets/index-G6PlX6UC.css\">\n  </head>\n  <body>\n    <div id=\"root\"></div>\n  </body>\n</html>\n",
+      "sitemap": "present",
+      "exposed_files": [
+        ".env",
+        ".git/HEAD",
+        "web.config",
+        ".htaccess",
+        "config.php.bak",
+        "config.php~",
+        ".svn/entries",
+        "config.php",
+        ".htpasswd",
+        "database.yml",
+        "settings.py",
+        "composer.json",
+        ".git/config",
+        "Dockerfile",
+        "docker-compose.yml",
+        "backup.sql",
+        "db.sql",
+        "package.json",
+        "dump.sql",
+        "phpinfo.php",
+        "test.php",
+        "administrator/",
+        "admin/",
+        "info.php",
+        "phpmyadmin/",
+        "server-status",
+        "backup.zip",
+        ".DS_Store",
+        "sitemap.xml",
+        "id_rsa",
+        "backup.tar.gz",
+        "robots.txt"
+      ]
+    }
+  },
+  "stats": {
+    "urls_crawled": 1,
+    "forms_found": 0,
+    "params_found": 0,
+    "requests_sent": 59,
+    "checks_run": 12
+  },
+  "findings": [
+    {
+      "id": "FILE-001",
+      "title": "Sensitive file exposed: /.env",
+      "severity": "HIGH",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-538",
+      "cvss": 7.5,
+      "location": "https://somnium.ccstiet.com/.env",
+      "description": "The path /.env is publicly reachable and returned HTTP 200.",
+      "evidence": "<!doctype html> <html lang=\"en\">   <head>     <meta charset=\"UTF-8\" />     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />     <title>Somnium &mdash; Dream. Decode. Escape.</t",
+      "impact": "May disclose credentials, source code, or configuration that aids further attacks.",
+      "remediation": "Remove the file from the web root or block access via server config; rotate any leaked secrets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/538.html"
+      ]
+    },
+    {
+      "id": "FILE-001",
+      "title": "Sensitive file exposed: /.git/HEAD",
+      "severity": "HIGH",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-538",
+      "cvss": 7.5,
+      "location": "https://somnium.ccstiet.com/.git/HEAD",
+      "description": "The path /.git/HEAD is publicly reachable and returned HTTP 200.",
+      "evidence": "<!doctype html> <html lang=\"en\">   <head>     <meta charset=\"UTF-8\" />     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />     <title>Somnium &mdash; Dream. Decode. Escape.</t",
+      "impact": "May disclose credentials, source code, or configuration that aids further attacks.",
+      "remediation": "Remove the file from the web root or block access via server config; rotate any leaked secrets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/538.html"
+      ]
+    },
+    {
+      "id": "FILE-001",
+      "title": "Sensitive file exposed: /config.php.bak",
+      "severity": "HIGH",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-538",
+      "cvss": 7.5,
+      "location": "https://somnium.ccstiet.com/config.php.bak",
+      "description": "The path /config.php.bak is publicly reachable and returned HTTP 200.",
+      "evidence": "<!doctype html> <html lang=\"en\">   <head>     <meta charset=\"UTF-8\" />     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />     <title>Somnium &mdash; Dream. Decode. Escape.</t",
+      "impact": "May disclose credentials, source code, or configuration that aids further attacks.",
+      "remediation": "Remove the file from the web root or block access via server config; rotate any leaked secrets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/538.html"
+      ]
+    },
+    {
+      "id": "FILE-001",
+      "title": "Sensitive file exposed: /config.php~",
+      "severity": "HIGH",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-538",
+      "cvss": 7.5,
+      "location": "https://somnium.ccstiet.com/config.php~",
+      "description": "The path /config.php~ is publicly reachable and returned HTTP 200.",
+      "evidence": "<!doctype html> <html lang=\"en\">   <head>     <meta charset=\"UTF-8\" />     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />     <title>Somnium &mdash; Dream. Decode. Escape.</t",
+      "impact": "May disclose credentials, source code, or configuration that aids further attacks.",
+      "remediation": "Remove the file from the web root or block access via server config; rotate any leaked secrets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/538.html"
+      ]
+    },
+    {
+      "id": "FILE-001",
+      "title": "Sensitive file exposed: /.htpasswd",
+      "severity": "HIGH",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-538",
+      "cvss": 7.5,
+      "location": "https://somnium.ccstiet.com/.htpasswd",
+      "description": "The path /.htpasswd is publicly reachable and returned HTTP 200.",
+      "evidence": "<!doctype html> <html lang=\"en\">   <head>     <meta charset=\"UTF-8\" />     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />     <title>Somnium &mdash; Dream. Decode. Escape.</t",
+      "impact": "May disclose credentials, source code, or configuration that aids further attacks.",
+      "remediation": "Remove the file from the web root or block access via server config; rotate any leaked secrets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/538.html"
+      ]
+    },
+    {
+      "id": "FILE-001",
+      "title": "Sensitive file exposed: /database.yml",
+      "severity": "HIGH",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-538",
+      "cvss": 7.5,
+      "location": "https://somnium.ccstiet.com/database.yml",
+      "description": "The path /database.yml is publicly reachable and returned HTTP 200.",
+      "evidence": "<!doctype html> <html lang=\"en\">   <head>     <meta charset=\"UTF-8\" />     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />     <title>Somnium &mdash; Dream. Decode. Escape.</t",
+      "impact": "May disclose credentials, source code, or configuration that aids further attacks.",
+      "remediation": "Remove the file from the web root or block access via server config; rotate any leaked secrets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/538.html"
+      ]
+    },
+    {
+      "id": "FILE-001",
+      "title": "Sensitive file exposed: /settings.py",
+      "severity": "HIGH",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-538",
+      "cvss": 7.5,
+      "location": "https://somnium.ccstiet.com/settings.py",
+      "description": "The path /settings.py is publicly reachable and returned HTTP 200.",
+      "evidence": "<!doctype html> <html lang=\"en\">   <head>     <meta charset=\"UTF-8\" />     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />     <title>Somnium &mdash; Dream. Decode. Escape.</t",
+      "impact": "May disclose credentials, source code, or configuration that aids further attacks.",
+      "remediation": "Remove the file from the web root or block access via server config; rotate any leaked secrets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/538.html"
+      ]
+    },
+    {
+      "id": "FILE-001",
+      "title": "Sensitive file exposed: /.git/config",
+      "severity": "HIGH",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-538",
+      "cvss": 7.5,
+      "location": "https://somnium.ccstiet.com/.git/config",
+      "description": "The path /.git/config is publicly reachable and returned HTTP 200.",
+      "evidence": "<!doctype html> <html lang=\"en\">   <head>     <meta charset=\"UTF-8\" />     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />     <title>Somnium &mdash; Dream. Decode. Escape.</t",
+      "impact": "May disclose credentials, source code, or configuration that aids further attacks.",
+      "remediation": "Remove the file from the web root or block access via server config; rotate any leaked secrets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/538.html"
+      ]
+    },
+    {
+      "id": "FILE-001",
+      "title": "Sensitive file exposed: /backup.sql",
+      "severity": "HIGH",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-538",
+      "cvss": 7.5,
+      "location": "https://somnium.ccstiet.com/backup.sql",
+      "description": "The path /backup.sql is publicly reachable and returned HTTP 200.",
+      "evidence": "<!doctype html> <html lang=\"en\">   <head>     <meta charset=\"UTF-8\" />     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />     <title>Somnium &mdash; Dream. Decode. Escape.</t",
+      "impact": "May disclose credentials, source code, or configuration that aids further attacks.",
+      "remediation": "Remove the file from the web root or block access via server config; rotate any leaked secrets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/538.html"
+      ]
+    },
+    {
+      "id": "FILE-001",
+      "title": "Sensitive file exposed: /db.sql",
+      "severity": "HIGH",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-538",
+      "cvss": 7.5,
+      "location": "https://somnium.ccstiet.com/db.sql",
+      "description": "The path /db.sql is publicly reachable and returned HTTP 200.",
+      "evidence": "<!doctype html> <html lang=\"en\">   <head>     <meta charset=\"UTF-8\" />     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />     <title>Somnium &mdash; Dream. Decode. Escape.</t",
+      "impact": "May disclose credentials, source code, or configuration that aids further attacks.",
+      "remediation": "Remove the file from the web root or block access via server config; rotate any leaked secrets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/538.html"
+      ]
+    },
+    {
+      "id": "FILE-001",
+      "title": "Sensitive file exposed: /dump.sql",
+      "severity": "HIGH",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-538",
+      "cvss": 7.5,
+      "location": "https://somnium.ccstiet.com/dump.sql",
+      "description": "The path /dump.sql is publicly reachable and returned HTTP 200.",
+      "evidence": "<!doctype html> <html lang=\"en\">   <head>     <meta charset=\"UTF-8\" />     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />     <title>Somnium &mdash; Dream. Decode. Escape.</t",
+      "impact": "May disclose credentials, source code, or configuration that aids further attacks.",
+      "remediation": "Remove the file from the web root or block access via server config; rotate any leaked secrets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/538.html"
+      ]
+    },
+    {
+      "id": "FILE-001",
+      "title": "Sensitive file exposed: /id_rsa",
+      "severity": "HIGH",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-538",
+      "cvss": 7.5,
+      "location": "https://somnium.ccstiet.com/id_rsa",
+      "description": "The path /id_rsa is publicly reachable and returned HTTP 200.",
+      "evidence": "<!doctype html> <html lang=\"en\">   <head>     <meta charset=\"UTF-8\" />     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />     <title>Somnium &mdash; Dream. Decode. Escape.</t",
+      "impact": "May disclose credentials, source code, or configuration that aids further attacks.",
+      "remediation": "Remove the file from the web root or block access via server config; rotate any leaked secrets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/538.html"
+      ]
+    },
+    {
+      "id": "FILE-001",
+      "title": "Sensitive file exposed: /web.config",
+      "severity": "MEDIUM",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-538",
+      "cvss": 5.3,
+      "location": "https://somnium.ccstiet.com/web.config",
+      "description": "The path /web.config is publicly reachable and returned HTTP 200.",
+      "evidence": "<!doctype html> <html lang=\"en\">   <head>     <meta charset=\"UTF-8\" />     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />     <title>Somnium &mdash; Dream. Decode. Escape.</t",
+      "impact": "May disclose configuration or metadata useful to an attacker.",
+      "remediation": "Remove the file from the web root or block access via server config; rotate any leaked secrets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/538.html"
+      ]
+    },
+    {
+      "id": "FILE-001",
+      "title": "Sensitive file exposed: /.htaccess",
+      "severity": "MEDIUM",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-538",
+      "cvss": 5.3,
+      "location": "https://somnium.ccstiet.com/.htaccess",
+      "description": "The path /.htaccess is publicly reachable and returned HTTP 200.",
+      "evidence": "<!doctype html> <html lang=\"en\">   <head>     <meta charset=\"UTF-8\" />     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />     <title>Somnium &mdash; Dream. Decode. Escape.</t",
+      "impact": "May disclose configuration or metadata useful to an attacker.",
+      "remediation": "Remove the file from the web root or block access via server config; rotate any leaked secrets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/538.html"
+      ]
+    },
+    {
+      "id": "FILE-001",
+      "title": "Sensitive file exposed: /.svn/entries",
+      "severity": "MEDIUM",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-538",
+      "cvss": 5.3,
+      "location": "https://somnium.ccstiet.com/.svn/entries",
+      "description": "The path /.svn/entries is publicly reachable and returned HTTP 200.",
+      "evidence": "<!doctype html> <html lang=\"en\">   <head>     <meta charset=\"UTF-8\" />     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />     <title>Somnium &mdash; Dream. Decode. Escape.</t",
+      "impact": "May disclose configuration or metadata useful to an attacker.",
+      "remediation": "Remove the file from the web root or block access via server config; rotate any leaked secrets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/538.html"
+      ]
+    },
+    {
+      "id": "FILE-001",
+      "title": "Sensitive file exposed: /config.php",
+      "severity": "MEDIUM",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-538",
+      "cvss": 5.3,
+      "location": "https://somnium.ccstiet.com/config.php",
+      "description": "The path /config.php is publicly reachable and returned HTTP 200.",
+      "evidence": "<!doctype html> <html lang=\"en\">   <head>     <meta charset=\"UTF-8\" />     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />     <title>Somnium &mdash; Dream. Decode. Escape.</t",
+      "impact": "May disclose configuration or metadata useful to an attacker.",
+      "remediation": "Remove the file from the web root or block access via server config; rotate any leaked secrets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/538.html"
+      ]
+    },
+    {
+      "id": "FILE-001",
+      "title": "Sensitive file exposed: /composer.json",
+      "severity": "MEDIUM",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-538",
+      "cvss": 5.3,
+      "location": "https://somnium.ccstiet.com/composer.json",
+      "description": "The path /composer.json is publicly reachable and returned HTTP 200.",
+      "evidence": "<!doctype html> <html lang=\"en\">   <head>     <meta charset=\"UTF-8\" />     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />     <title>Somnium &mdash; Dream. Decode. Escape.</t",
+      "impact": "May disclose configuration or metadata useful to an attacker.",
+      "remediation": "Remove the file from the web root or block access via server config; rotate any leaked secrets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/538.html"
+      ]
+    },
+    {
+      "id": "FILE-001",
+      "title": "Sensitive file exposed: /Dockerfile",
+      "severity": "MEDIUM",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-538",
+      "cvss": 5.3,
+      "location": "https://somnium.ccstiet.com/Dockerfile",
+      "description": "The path /Dockerfile is publicly reachable and returned HTTP 200.",
+      "evidence": "<!doctype html> <html lang=\"en\">   <head>     <meta charset=\"UTF-8\" />     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />     <title>Somnium &mdash; Dream. Decode. Escape.</t",
+      "impact": "May disclose configuration or metadata useful to an attacker.",
+      "remediation": "Remove the file from the web root or block access via server config; rotate any leaked secrets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/538.html"
+      ]
+    },
+    {
+      "id": "FILE-001",
+      "title": "Sensitive file exposed: /docker-compose.yml",
+      "severity": "MEDIUM",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-538",
+      "cvss": 5.3,
+      "location": "https://somnium.ccstiet.com/docker-compose.yml",
+      "description": "The path /docker-compose.yml is publicly reachable and returned HTTP 200.",
+      "evidence": "<!doctype html> <html lang=\"en\">   <head>     <meta charset=\"UTF-8\" />     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />     <title>Somnium &mdash; Dream. Decode. Escape.</t",
+      "impact": "May disclose configuration or metadata useful to an attacker.",
+      "remediation": "Remove the file from the web root or block access via server config; rotate any leaked secrets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/538.html"
+      ]
+    },
+    {
+      "id": "FILE-001",
+      "title": "Sensitive file exposed: /package.json",
+      "severity": "MEDIUM",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-538",
+      "cvss": 5.3,
+      "location": "https://somnium.ccstiet.com/package.json",
+      "description": "The path /package.json is publicly reachable and returned HTTP 200.",
+      "evidence": "<!doctype html> <html lang=\"en\">   <head>     <meta charset=\"UTF-8\" />     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />     <title>Somnium &mdash; Dream. Decode. Escape.</t",
+      "impact": "May disclose configuration or metadata useful to an attacker.",
+      "remediation": "Remove the file from the web root or block access via server config; rotate any leaked secrets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/538.html"
+      ]
+    },
+    {
+      "id": "FILE-001",
+      "title": "Sensitive file exposed: /phpinfo.php",
+      "severity": "MEDIUM",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-538",
+      "cvss": 5.3,
+      "location": "https://somnium.ccstiet.com/phpinfo.php",
+      "description": "The path /phpinfo.php is publicly reachable and returned HTTP 200.",
+      "evidence": "<!doctype html> <html lang=\"en\">   <head>     <meta charset=\"UTF-8\" />     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />     <title>Somnium &mdash; Dream. Decode. Escape.</t",
+      "impact": "May disclose configuration or metadata useful to an attacker.",
+      "remediation": "Remove the file from the web root or block access via server config; rotate any leaked secrets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/538.html"
+      ]
+    },
+    {
+      "id": "FILE-001",
+      "title": "Sensitive file exposed: /test.php",
+      "severity": "MEDIUM",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-538",
+      "cvss": 5.3,
+      "location": "https://somnium.ccstiet.com/test.php",
+      "description": "The path /test.php is publicly reachable and returned HTTP 200.",
+      "evidence": "<!doctype html> <html lang=\"en\">   <head>     <meta charset=\"UTF-8\" />     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />     <title>Somnium &mdash; Dream. Decode. Escape.</t",
+      "impact": "May disclose configuration or metadata useful to an attacker.",
+      "remediation": "Remove the file from the web root or block access via server config; rotate any leaked secrets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/538.html"
+      ]
+    },
+    {
+      "id": "FILE-001",
+      "title": "Sensitive file exposed: /administrator/",
+      "severity": "MEDIUM",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-538",
+      "cvss": 5.3,
+      "location": "https://somnium.ccstiet.com/administrator/",
+      "description": "The path /administrator/ is publicly reachable and returned HTTP 200.",
+      "evidence": "<!doctype html> <html lang=\"en\">   <head>     <meta charset=\"UTF-8\" />     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />     <title>Somnium &mdash; Dream. Decode. Escape.</t",
+      "impact": "May disclose configuration or metadata useful to an attacker.",
+      "remediation": "Remove the file from the web root or block access via server config; rotate any leaked secrets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/538.html"
+      ]
+    },
+    {
+      "id": "FILE-001",
+      "title": "Sensitive file exposed: /admin/",
+      "severity": "MEDIUM",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-538",
+      "cvss": 5.3,
+      "location": "https://somnium.ccstiet.com/admin/",
+      "description": "The path /admin/ is publicly reachable and returned HTTP 200.",
+      "evidence": "<!doctype html> <html lang=\"en\">   <head>     <meta charset=\"UTF-8\" />     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />     <title>Somnium &mdash; Dream. Decode. Escape.</t",
+      "impact": "May disclose configuration or metadata useful to an attacker.",
+      "remediation": "Remove the file from the web root or block access via server config; rotate any leaked secrets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/538.html"
+      ]
+    },
+    {
+      "id": "FILE-001",
+      "title": "Sensitive file exposed: /info.php",
+      "severity": "MEDIUM",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-538",
+      "cvss": 5.3,
+      "location": "https://somnium.ccstiet.com/info.php",
+      "description": "The path /info.php is publicly reachable and returned HTTP 200.",
+      "evidence": "<!doctype html> <html lang=\"en\">   <head>     <meta charset=\"UTF-8\" />     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />     <title>Somnium &mdash; Dream. Decode. Escape.</t",
+      "impact": "May disclose configuration or metadata useful to an attacker.",
+      "remediation": "Remove the file from the web root or block access via server config; rotate any leaked secrets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/538.html"
+      ]
+    },
+    {
+      "id": "FILE-001",
+      "title": "Sensitive file exposed: /phpmyadmin/",
+      "severity": "MEDIUM",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-538",
+      "cvss": 5.3,
+      "location": "https://somnium.ccstiet.com/phpmyadmin/",
+      "description": "The path /phpmyadmin/ is publicly reachable and returned HTTP 200.",
+      "evidence": "<!doctype html> <html lang=\"en\">   <head>     <meta charset=\"UTF-8\" />     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />     <title>Somnium &mdash; Dream. Decode. Escape.</t",
+      "impact": "May disclose configuration or metadata useful to an attacker.",
+      "remediation": "Remove the file from the web root or block access via server config; rotate any leaked secrets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/538.html"
+      ]
+    },
+    {
+      "id": "FILE-001",
+      "title": "Sensitive file exposed: /server-status",
+      "severity": "MEDIUM",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-538",
+      "cvss": 5.3,
+      "location": "https://somnium.ccstiet.com/server-status",
+      "description": "The path /server-status is publicly reachable and returned HTTP 200.",
+      "evidence": "<!doctype html> <html lang=\"en\">   <head>     <meta charset=\"UTF-8\" />     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />     <title>Somnium &mdash; Dream. Decode. Escape.</t",
+      "impact": "May disclose configuration or metadata useful to an attacker.",
+      "remediation": "Remove the file from the web root or block access via server config; rotate any leaked secrets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/538.html"
+      ]
+    },
+    {
+      "id": "FILE-001",
+      "title": "Sensitive file exposed: /backup.zip",
+      "severity": "MEDIUM",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-538",
+      "cvss": 5.3,
+      "location": "https://somnium.ccstiet.com/backup.zip",
+      "description": "The path /backup.zip is publicly reachable and returned HTTP 200.",
+      "evidence": "<!doctype html> <html lang=\"en\">   <head>     <meta charset=\"UTF-8\" />     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />     <title>Somnium &mdash; Dream. Decode. Escape.</t",
+      "impact": "May disclose configuration or metadata useful to an attacker.",
+      "remediation": "Remove the file from the web root or block access via server config; rotate any leaked secrets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/538.html"
+      ]
+    },
+    {
+      "id": "FILE-001",
+      "title": "Sensitive file exposed: /.DS_Store",
+      "severity": "MEDIUM",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-538",
+      "cvss": 5.3,
+      "location": "https://somnium.ccstiet.com/.DS_Store",
+      "description": "The path /.DS_Store is publicly reachable and returned HTTP 200.",
+      "evidence": "<!doctype html> <html lang=\"en\">   <head>     <meta charset=\"UTF-8\" />     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />     <title>Somnium &mdash; Dream. Decode. Escape.</t",
+      "impact": "May disclose configuration or metadata useful to an attacker.",
+      "remediation": "Remove the file from the web root or block access via server config; rotate any leaked secrets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/538.html"
+      ]
+    },
+    {
+      "id": "FILE-001",
+      "title": "Sensitive file exposed: /sitemap.xml",
+      "severity": "MEDIUM",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-538",
+      "cvss": 5.3,
+      "location": "https://somnium.ccstiet.com/sitemap.xml",
+      "description": "The path /sitemap.xml is publicly reachable and returned HTTP 200.",
+      "evidence": "<!doctype html> <html lang=\"en\">   <head>     <meta charset=\"UTF-8\" />     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />     <title>Somnium &mdash; Dream. Decode. Escape.</t",
+      "impact": "May disclose configuration or metadata useful to an attacker.",
+      "remediation": "Remove the file from the web root or block access via server config; rotate any leaked secrets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/538.html"
+      ]
+    },
+    {
+      "id": "FILE-001",
+      "title": "Sensitive file exposed: /backup.tar.gz",
+      "severity": "MEDIUM",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-538",
+      "cvss": 5.3,
+      "location": "https://somnium.ccstiet.com/backup.tar.gz",
+      "description": "The path /backup.tar.gz is publicly reachable and returned HTTP 200.",
+      "evidence": "<!doctype html> <html lang=\"en\">   <head>     <meta charset=\"UTF-8\" />     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />     <title>Somnium &mdash; Dream. Decode. Escape.</t",
+      "impact": "May disclose configuration or metadata useful to an attacker.",
+      "remediation": "Remove the file from the web root or block access via server config; rotate any leaked secrets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/538.html"
+      ]
+    },
+    {
+      "id": "FILE-001",
+      "title": "Sensitive file exposed: /robots.txt",
+      "severity": "MEDIUM",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-538",
+      "cvss": 5.3,
+      "location": "https://somnium.ccstiet.com/robots.txt",
+      "description": "The path /robots.txt is publicly reachable and returned HTTP 200.",
+      "evidence": "<!doctype html> <html lang=\"en\">   <head>     <meta charset=\"UTF-8\" />     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />     <title>Somnium &mdash; Dream. Decode. Escape.</t",
+      "impact": "May disclose configuration or metadata useful to an attacker.",
+      "remediation": "Remove the file from the web root or block access via server config; rotate any leaked secrets.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/538.html"
+      ]
+    },
+    {
+      "id": "SEC-HEADERS-001",
+      "title": "Missing Content-Security-Policy",
+      "severity": "MEDIUM",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-693",
+      "cvss": 4.0,
+      "location": "https://somnium.ccstiet.com/",
+      "description": "The response is missing the 'content-security-policy' header.",
+      "evidence": "Response headers: access-control-allow-origin, age, alt-svc, cache-control, cf-cache-status, cf-ray, connection, content-disposition, content-encoding, content-security-policy-report-only, content-t",
+      "impact": "Without CSP, injected scripts run freely, worsening XSS impact.",
+      "remediation": "Add a restrictive Content-Security-Policy header.",
+      "references": [
+        "https://owasp.org/www-project-secure-headers/"
+      ]
+    },
+    {
+      "id": "CORS-001",
+      "title": "Wildcard CORS policy (Access-Control-Allow-Origin: *)",
+      "severity": "LOW",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-942",
+      "cvss": 3.7,
+      "location": "https://somnium.ccstiet.com/",
+      "description": "The server allows any origin to read responses.",
+      "evidence": "Access-Control-Allow-Origin: *",
+      "impact": "Any website can read responses (higher risk if the endpoint returns sensitive data).",
+      "remediation": "Restrict Access-Control-Allow-Origin to a trusted allowlist of origins.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/942.html"
+      ]
+    }
+  ]
+}

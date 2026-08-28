@@ -1,0 +1,281 @@
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "WebRecon",
+          "informationUri": "https://example.local/webrecon",
+          "version": "0.1.0",
+          "rules": [
+            {
+              "id": "SEC-HEADERS",
+              "name": "Missing Content-Security-Policy",
+              "shortDescription": {
+                "text": "Missing Content-Security-Policy"
+              },
+              "fullDescription": {
+                "text": "The response is missing the 'content-security-policy' header."
+              },
+              "helpUri": "https://owasp.org/www-project-secure-headers/",
+              "properties": {
+                "security-severity": "4.0",
+                "owasp": "A05:2021 - Security Misconfiguration",
+                "cwe": "CWE-693"
+              }
+            },
+            {
+              "id": "METHOD",
+              "name": "Dangerous HTTP method enabled: TRACE",
+              "shortDescription": {
+                "text": "Dangerous HTTP method enabled: TRACE"
+              },
+              "fullDescription": {
+                "text": "The server appears to accept the TRACE method."
+              },
+              "helpUri": "https://cwe.mitre.org/data/definitions/650.html",
+              "properties": {
+                "security-severity": "3.5",
+                "owasp": "A05:2021 - Security Misconfiguration",
+                "cwe": "CWE-650"
+              }
+            }
+          ]
+        }
+      },
+      "results": [
+        {
+          "ruleId": "METHOD",
+          "level": "error",
+          "message": {
+            "text": "Dangerous HTTP method enabled: PUT \u2014 PUT may allow uploading arbitrary files. [confidence: CONFIRMED]"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "http://danishdhanjal.xyz/"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "HIGH",
+            "confidence": "CONFIRMED",
+            "evidence": "PUT http://danishdhanjal.xyz/ -> HTTP 308",
+            "poc": "",
+            "remediation": "Disable PUT unless explicitly required."
+          }
+        },
+        {
+          "ruleId": "METHOD",
+          "level": "error",
+          "message": {
+            "text": "Dangerous HTTP method enabled: DELETE \u2014 DELETE may allow removing server resources. [confidence: CONFIRMED]"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "http://danishdhanjal.xyz/"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "HIGH",
+            "confidence": "CONFIRMED",
+            "evidence": "DELETE http://danishdhanjal.xyz/ -> HTTP 308",
+            "poc": "",
+            "remediation": "Disable DELETE unless explicitly required."
+          }
+        },
+        {
+          "ruleId": "SEC-HEADERS",
+          "level": "warning",
+          "message": {
+            "text": "Missing Content-Security-Policy \u2014 Without CSP, injected scripts run freely, worsening XSS impact. [confidence: CONFIRMED]"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "http://danishdhanjal.xyz/"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "MEDIUM",
+            "confidence": "CONFIRMED",
+            "evidence": "Response headers: cache-control, content-type, date, server, transfer-encoding, x-vercel-challenge-token, x-vercel-id, x-vercel-mitigated",
+            "poc": "",
+            "remediation": "Add a restrictive Content-Security-Policy header."
+          }
+        },
+        {
+          "ruleId": "SEC-HEADERS",
+          "level": "warning",
+          "message": {
+            "text": "Missing Strict-Transport-Security (HSTS) \u2014 Users can be downgraded to HTTP and have traffic intercepted. [confidence: CONFIRMED]"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "http://danishdhanjal.xyz/"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "MEDIUM",
+            "confidence": "CONFIRMED",
+            "evidence": "Response headers: cache-control, content-type, date, server, transfer-encoding, x-vercel-challenge-token, x-vercel-id, x-vercel-mitigated",
+            "poc": "",
+            "remediation": "Add 'Strict-Transport-Security: max-age=31536000; includeSubDomains'."
+          }
+        },
+        {
+          "ruleId": "METHOD",
+          "level": "warning",
+          "message": {
+            "text": "Dangerous HTTP method enabled: CONNECT \u2014 CONNECT may allow proxying through the server. [confidence: CONFIRMED]"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "http://danishdhanjal.xyz/"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "MEDIUM",
+            "confidence": "CONFIRMED",
+            "evidence": "CONNECT http://danishdhanjal.xyz/ -> HTTP 308",
+            "poc": "",
+            "remediation": "Disable CONNECT unless explicitly required."
+          }
+        },
+        {
+          "ruleId": "SEC-HEADERS",
+          "level": "note",
+          "message": {
+            "text": "Missing X-Frame-Options \u2014 The page can be framed, enabling clickjacking. [confidence: CONFIRMED]"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "http://danishdhanjal.xyz/"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "LOW",
+            "confidence": "CONFIRMED",
+            "evidence": "Response headers: cache-control, content-type, date, server, transfer-encoding, x-vercel-challenge-token, x-vercel-id, x-vercel-mitigated",
+            "poc": "",
+            "remediation": "Add 'X-Frame-Options: DENY' or a CSP frame-ancestors directive."
+          }
+        },
+        {
+          "ruleId": "SEC-HEADERS",
+          "level": "note",
+          "message": {
+            "text": "Missing X-Content-Type-Options \u2014 Browsers may MIME-sniff responses, enabling some attacks. [confidence: CONFIRMED]"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "http://danishdhanjal.xyz/"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "LOW",
+            "confidence": "CONFIRMED",
+            "evidence": "Response headers: cache-control, content-type, date, server, transfer-encoding, x-vercel-challenge-token, x-vercel-id, x-vercel-mitigated",
+            "poc": "",
+            "remediation": "Add 'X-Content-Type-Options: nosniff'."
+          }
+        },
+        {
+          "ruleId": "SEC-HEADERS",
+          "level": "note",
+          "message": {
+            "text": "Missing Referrer-Policy \u2014 Full URLs may leak to third parties via the Referer header. [confidence: CONFIRMED]"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "http://danishdhanjal.xyz/"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "LOW",
+            "confidence": "CONFIRMED",
+            "evidence": "Response headers: cache-control, content-type, date, server, transfer-encoding, x-vercel-challenge-token, x-vercel-id, x-vercel-mitigated",
+            "poc": "",
+            "remediation": "Add 'Referrer-Policy: strict-origin-when-cross-origin'."
+          }
+        },
+        {
+          "ruleId": "METHOD",
+          "level": "note",
+          "message": {
+            "text": "Dangerous HTTP method enabled: TRACE \u2014 TRACE can enable Cross-Site Tracing (XST). [confidence: CONFIRMED]"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "http://danishdhanjal.xyz/"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "LOW",
+            "confidence": "CONFIRMED",
+            "evidence": "TRACE http://danishdhanjal.xyz/ -> HTTP 308",
+            "poc": "",
+            "remediation": "Disable TRACE unless explicitly required."
+          }
+        },
+        {
+          "ruleId": "SEC-HEADERS",
+          "level": "note",
+          "message": {
+            "text": "Missing Permissions-Policy \u2014 Powerful browser features are not explicitly restricted. [confidence: CONFIRMED]"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "http://danishdhanjal.xyz/"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "severity": "INFO",
+            "confidence": "CONFIRMED",
+            "evidence": "Response headers: cache-control, content-type, date, server, transfer-encoding, x-vercel-challenge-token, x-vercel-id, x-vercel-mitigated",
+            "poc": "",
+            "remediation": "Add a Permissions-Policy header disabling unused features."
+          }
+        }
+      ]
+    }
+  ]
+}

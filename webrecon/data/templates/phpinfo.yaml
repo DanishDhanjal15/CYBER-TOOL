@@ -1,0 +1,21 @@
+id: phpinfo-disclosure
+info:
+  name: phpinfo() information disclosure
+  severity: high
+  description: A phpinfo() page is exposed, leaking server configuration.
+  impact: Reveals paths, environment variables, and module versions.
+  remediation: Remove phpinfo/info/test PHP files from production.
+  owasp: "A05:2021 - Security Misconfiguration"
+  cwe: CWE-200
+  cvss: 7.5
+requests:
+  - method: GET
+    path: ["/phpinfo.php", "/info.php", "/test.php"]
+    matchers-condition: and
+    matchers:
+      - type: status
+        status: [200]
+      - type: word
+        part: body
+        condition: or
+        words: ["PHP Version", "phpinfo()"]

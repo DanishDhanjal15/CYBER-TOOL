@@ -1,0 +1,6 @@
+;echo CMD""INJXOK
+|echo CMD""INJXOK
+&&echo CMD""INJXOK
+`echo CMD""INJXOK`
+$(echo CMD""INJXOK)
+;echo CMD''INJXOK

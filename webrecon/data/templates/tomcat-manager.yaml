@@ -1,0 +1,18 @@
+id: tomcat-manager
+info:
+  name: Apache Tomcat Manager exposed
+  severity: high
+  description: The Tomcat Manager application is reachable.
+  impact: Often protected only by default credentials; WAR upload = RCE.
+  remediation: Restrict manager access by IP and use strong credentials.
+  owasp: "A05:2021 - Security Misconfiguration"
+  cwe: CWE-284
+  cvss: 7.5
+requests:
+  - method: GET
+    path: ["/manager/html", "/host-manager/html"]
+    matchers:
+      - type: word
+        part: body
+        condition: or
+        words: ["Tomcat Web Application Manager", "401 Unauthorized"]

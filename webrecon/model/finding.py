@@ -1,0 +1,72 @@
+"""The Finding data model — every detection is normalised into this shape."""
+from __future__ import annotations
+
+from dataclasses import dataclass, field, asdict
+
+from .severity import Severity
+
+
+@dataclass
+class Finding:
+    id: str                      # stable id, e.g. "SEC-HEADERS-001"
+    title: str                   # short human title
+    severity: Severity           # CRITICAL / HIGH / MEDIUM / LOW / INFO
+    owasp: str = ""              # e.g. "A05:2021 - Security Misconfiguration"
+    cwe: str = ""               # e.g. "CWE-79"
+    cvss: float = 0.0            # approximate 0.0-10.0
+    location: str = ""          # affected URL / parameter / port
+    description: str = ""        # what the issue is (plain language)
+    evidence: str = ""          # proof: request/response snippet
+    impact: str = ""            # what an attacker could do
+    remediation: str = ""        # how to fix it
+    references: list[str] = field(default_factory=list)
+    # Validation-first fields (inspired by dynamic-exploitation scanners):
+    confidence: str = "CONFIRMED"   # CONFIRMED / PROBABLE / POTENTIAL
+    poc: str = ""                   # copy-paste reproduction (e.g. a curl cmd)
+
+    def to_dict(self) -> dict:
+        d = asdict(self)
+        d["severity"] = self.severity.value
+        return d
+
+    def __str__(self) -> str:
+        return f"[{self.severity}] {self.title} @ {self.location or 'n/a'}"
+
+
+@dataclass
+class ScanResult:
+    """Everything produced by a single scan run."""
+    target: str
+    started_at: str
+    finished_at: str = ""
+    duration_seconds: float = 0.0
+    findings: list[Finding] = field(default_factory=list)
+    recon: dict = field(default_factory=dict)   # raw recon info (dns, ports, tls...)
+    stats: dict = field(default_factory=dict)   # crawled counts, requests sent...
+
+    def add(self, finding: Finding) -> None:
+        self.findings.append(finding)
+
+    def extend(self, findings) -> None:
+        self.findings.extend(findings)
+
+    def sorted_findings(self) -> list[Finding]:
+        return sorted(self.findings, key=lambda f: f.severity.rank, reverse=True)
+
+    def counts(self) -> dict[str, int]:
+        out = {s.value: 0 for s in Severity}
+        for f in self.findings:
+            out[f.severity.value] += 1
+        return out
+
+    def to_dict(self) -> dict:
+        return {
+            "target": self.target,
+            "started_at": self.started_at,
+            "finished_at": self.finished_at,
+            "duration_seconds": round(self.duration_seconds, 2),
+            "counts": self.counts(),
+            "recon": self.recon,
+            "stats": self.stats,
+            "findings": [f.to_dict() for f in self.sorted_findings()],
+        }

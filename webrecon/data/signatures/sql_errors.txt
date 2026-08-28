@@ -1,0 +1,18 @@
+you have an error in your sql syntax
+warning: mysql
+mysqli_
+mysql_fetch
+mysql_num_rows
+unclosed quotation mark after the character string
+quoted string not properly terminated
+sqlstate
+odbc sql server driver
+ora-01756
+ora-00933
+postgresql query failed
+pg_query
+psql: error
+sqlite_error
+sqlite3::
+syntax error at or near
+supplied argument is not a valid mysql

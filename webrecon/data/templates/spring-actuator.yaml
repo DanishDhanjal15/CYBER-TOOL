@@ -1,0 +1,21 @@
+id: spring-actuator-env
+info:
+  name: Spring Boot /actuator/env exposed
+  severity: critical
+  description: The Spring Boot environment actuator is exposed without auth.
+  impact: Dumps environment variables including DB passwords and secrets.
+  remediation: Secure or disable actuator endpoints in production.
+  owasp: "A05:2021 - Security Misconfiguration"
+  cwe: CWE-200
+  cvss: 9.8
+requests:
+  - method: GET
+    path: ["/actuator/env", "/env"]
+    matchers-condition: and
+    matchers:
+      - type: status
+        status: [200]
+      - type: word
+        part: body
+        condition: or
+        words: ["propertySources", "systemProperties", "systemEnvironment"]

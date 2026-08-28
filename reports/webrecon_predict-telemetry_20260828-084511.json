@@ -1,0 +1,63 @@
+{
+  "target": "predict://telemetry.csv",
+  "started_at": "2026-08-28T08:45:11.287599+00:00",
+  "finished_at": "2026-08-28T08:45:11.293115+00:00",
+  "duration_seconds": 0.01,
+  "counts": {
+    "CRITICAL": 0,
+    "HIGH": 1,
+    "MEDIUM": 0,
+    "LOW": 1,
+    "INFO": 0
+  },
+  "recon": {},
+  "stats": {
+    "records": 15,
+    "components": 3,
+    "signals_detected": [
+      "ecc_correctable",
+      "smart_pending",
+      "smart_reallocated",
+      "temperature"
+    ],
+    "at_risk": 2
+  },
+  "findings": [
+    {
+      "id": "HW-RISK-7803",
+      "title": "Predicted early failure risk: disk-A",
+      "severity": "HIGH",
+      "owasp": "Reliability - Predictive Maintenance",
+      "cwe": "",
+      "cvss": 0.0,
+      "location": "disk-A",
+      "description": "Component 'disk-A' shows failure-predictive telemetry. Risk score 55/100.",
+      "evidence": "Reallocated sectors (SMART 5): 120, rising 14.40/day; Pending sectors (SMART 197): 24, rising 2.80/day",
+      "impact": "Likely hardware failure \u2014 ~9 day(s) to critical threshold at current trend. Unplanned failure can cause data loss, job aborts, or node downtime.",
+      "remediation": "Schedule proactive replacement / migration of workloads off this component; back up data; open a maintenance ticket. Re-check after the next telemetry interval.",
+      "references": [
+        "https://www.backblaze.com/blog/what-smart-stats-indicate-hard-drive-failures/"
+      ],
+      "confidence": "PROBABLE",
+      "poc": "predicted_window=~9 day(s) to critical threshold at current trend; drivers=2"
+    },
+    {
+      "id": "HW-RISK-2012",
+      "title": "Predicted early failure risk: node-C",
+      "severity": "LOW",
+      "owasp": "Reliability - Predictive Maintenance",
+      "cwe": "",
+      "cvss": 0.0,
+      "location": "node-C",
+      "description": "Component 'node-C' shows failure-predictive telemetry. Risk score 15/100.",
+      "evidence": "ECC correctable errors: 160000, rising 18170.00/day",
+      "impact": "Likely hardware failure \u2014 ~46 day(s) to critical threshold at current trend. Unplanned failure can cause data loss, job aborts, or node downtime.",
+      "remediation": "Schedule proactive replacement / migration of workloads off this component; back up data; open a maintenance ticket. Re-check after the next telemetry interval.",
+      "references": [
+        "https://www.backblaze.com/blog/what-smart-stats-indicate-hard-drive-failures/"
+      ],
+      "confidence": "PROBABLE",
+      "poc": "predicted_window=~46 day(s) to critical threshold at current trend; drivers=1"
+    }
+  ]
+}

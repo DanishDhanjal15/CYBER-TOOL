@@ -1,0 +1,267 @@
+{
+  "target": "http://danishdhanjal.xyz",
+  "started_at": "2026-08-28T08:52:24.633050+00:00",
+  "finished_at": "2026-08-28T08:52:41.648328+00:00",
+  "duration_seconds": 17.02,
+  "counts": {
+    "CRITICAL": 0,
+    "HIGH": 2,
+    "MEDIUM": 3,
+    "LOW": 4,
+    "INFO": 1
+  },
+  "recon": {
+    "dns": {
+      "host": "danishdhanjal.xyz",
+      "ip_addresses": [
+        "216.198.79.1",
+        "216.198.79.65"
+      ],
+      "records": {
+        "A": [
+          "216.198.79.1",
+          "64.29.17.65"
+        ],
+        "NS": [
+          "ns1.vercel-dns.com.",
+          "ns2.vercel-dns.com."
+        ],
+        "SOA": [
+          "ns1.vercel-dns.com. hostmaster.nsone.net. 1770399238 43200 7200 1209600 600"
+        ]
+      },
+      "reverse_dns": {
+        "216.198.79.1": null,
+        "216.198.79.65": null
+      }
+    },
+    "ports": {
+      "ip": "216.198.79.1",
+      "open_ports": {
+        "80": {
+          "service": "http",
+          "banner": ""
+        },
+        "443": {
+          "service": "https",
+          "banner": ""
+        }
+      },
+      "scanned": 33
+    },
+    "tls": {
+      "note": "target is not HTTPS; TLS checks skipped"
+    },
+    "fingerprint": {
+      "technologies": {
+        "Server header": "Vercel"
+      },
+      "headers": {
+        "Cache-Control": "private, no-store, max-age=0",
+        "Content-Type": "text/html; charset=utf-8",
+        "Server": "Vercel",
+        "X-Vercel-Challenge-Token": "2.1787907157.60.NzY4ZDRhZDZjN2I0Zjk0OTY1MzFiMDk4NmJkYTYyMzE7ZjI5ODk4MzU7NjFkYjJiMjI5NGMzOTRlOWExYzRmMDgxNTQ0ODk1NzQ0M2I0ZTFkZDszO3OF1D4uGDWtzHXoHf/febfFBFpCpxC+7G13Jf6rMI6SvowAM9E9V/Lej7f1UQXGnXrZLEr05gfWtvd4vvplO41IIMPKuZE4.5e4ec64e0a18172e32d3e8960dc078e0",
+        "X-Vercel-Id": "bom1::1787907157-AKbRP5akOIbxghrBcWNg5Zk7v0cfkW0b",
+        "X-Vercel-Mitigated": "challenge",
+        "Date": "Fri, 28 Aug 2026 08:52:37 GMT",
+        "Transfer-Encoding": "chunked"
+      },
+      "status": 403,
+      "title": "Vercel Security Checkpoint"
+    },
+    "files": {
+      "robots": null,
+      "sitemap": null,
+      "exposed_files": []
+    }
+  },
+  "stats": {
+    "urls_crawled": 1,
+    "forms_found": 0,
+    "params_found": 0,
+    "requests_sent": 60,
+    "checks_run": 16
+  },
+  "findings": [
+    {
+      "id": "METHOD-002",
+      "title": "Dangerous HTTP method enabled: PUT",
+      "severity": "HIGH",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-650",
+      "cvss": 7.5,
+      "location": "http://danishdhanjal.xyz/",
+      "description": "The server appears to accept the PUT method.",
+      "evidence": "PUT http://danishdhanjal.xyz/ -> HTTP 308",
+      "impact": "PUT may allow uploading arbitrary files.",
+      "remediation": "Disable PUT unless explicitly required.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/650.html"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": ""
+    },
+    {
+      "id": "METHOD-003",
+      "title": "Dangerous HTTP method enabled: DELETE",
+      "severity": "HIGH",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-650",
+      "cvss": 7.5,
+      "location": "http://danishdhanjal.xyz/",
+      "description": "The server appears to accept the DELETE method.",
+      "evidence": "DELETE http://danishdhanjal.xyz/ -> HTTP 308",
+      "impact": "DELETE may allow removing server resources.",
+      "remediation": "Disable DELETE unless explicitly required.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/650.html"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": ""
+    },
+    {
+      "id": "SEC-HEADERS-001",
+      "title": "Missing Content-Security-Policy",
+      "severity": "MEDIUM",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-693",
+      "cvss": 4.0,
+      "location": "http://danishdhanjal.xyz/",
+      "description": "The response is missing the 'content-security-policy' header.",
+      "evidence": "Response headers: cache-control, content-type, date, server, transfer-encoding, x-vercel-challenge-token, x-vercel-id, x-vercel-mitigated",
+      "impact": "Without CSP, injected scripts run freely, worsening XSS impact.",
+      "remediation": "Add a restrictive Content-Security-Policy header.",
+      "references": [
+        "https://owasp.org/www-project-secure-headers/"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": ""
+    },
+    {
+      "id": "SEC-HEADERS-002",
+      "title": "Missing Strict-Transport-Security (HSTS)",
+      "severity": "MEDIUM",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-693",
+      "cvss": 4.0,
+      "location": "http://danishdhanjal.xyz/",
+      "description": "The response is missing the 'strict-transport-security' header.",
+      "evidence": "Response headers: cache-control, content-type, date, server, transfer-encoding, x-vercel-challenge-token, x-vercel-id, x-vercel-mitigated",
+      "impact": "Users can be downgraded to HTTP and have traffic intercepted.",
+      "remediation": "Add 'Strict-Transport-Security: max-age=31536000; includeSubDomains'.",
+      "references": [
+        "https://owasp.org/www-project-secure-headers/"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": ""
+    },
+    {
+      "id": "METHOD-004",
+      "title": "Dangerous HTTP method enabled: CONNECT",
+      "severity": "MEDIUM",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-650",
+      "cvss": 3.5,
+      "location": "http://danishdhanjal.xyz/",
+      "description": "The server appears to accept the CONNECT method.",
+      "evidence": "CONNECT http://danishdhanjal.xyz/ -> HTTP 308",
+      "impact": "CONNECT may allow proxying through the server.",
+      "remediation": "Disable CONNECT unless explicitly required.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/650.html"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": ""
+    },
+    {
+      "id": "SEC-HEADERS-003",
+      "title": "Missing X-Frame-Options",
+      "severity": "LOW",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-693",
+      "cvss": 2.0,
+      "location": "http://danishdhanjal.xyz/",
+      "description": "The response is missing the 'x-frame-options' header.",
+      "evidence": "Response headers: cache-control, content-type, date, server, transfer-encoding, x-vercel-challenge-token, x-vercel-id, x-vercel-mitigated",
+      "impact": "The page can be framed, enabling clickjacking.",
+      "remediation": "Add 'X-Frame-Options: DENY' or a CSP frame-ancestors directive.",
+      "references": [
+        "https://owasp.org/www-project-secure-headers/"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": ""
+    },
+    {
+      "id": "SEC-HEADERS-004",
+      "title": "Missing X-Content-Type-Options",
+      "severity": "LOW",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-693",
+      "cvss": 2.0,
+      "location": "http://danishdhanjal.xyz/",
+      "description": "The response is missing the 'x-content-type-options' header.",
+      "evidence": "Response headers: cache-control, content-type, date, server, transfer-encoding, x-vercel-challenge-token, x-vercel-id, x-vercel-mitigated",
+      "impact": "Browsers may MIME-sniff responses, enabling some attacks.",
+      "remediation": "Add 'X-Content-Type-Options: nosniff'.",
+      "references": [
+        "https://owasp.org/www-project-secure-headers/"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": ""
+    },
+    {
+      "id": "SEC-HEADERS-005",
+      "title": "Missing Referrer-Policy",
+      "severity": "LOW",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-693",
+      "cvss": 2.0,
+      "location": "http://danishdhanjal.xyz/",
+      "description": "The response is missing the 'referrer-policy' header.",
+      "evidence": "Response headers: cache-control, content-type, date, server, transfer-encoding, x-vercel-challenge-token, x-vercel-id, x-vercel-mitigated",
+      "impact": "Full URLs may leak to third parties via the Referer header.",
+      "remediation": "Add 'Referrer-Policy: strict-origin-when-cross-origin'.",
+      "references": [
+        "https://owasp.org/www-project-secure-headers/"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": ""
+    },
+    {
+      "id": "METHOD-001",
+      "title": "Dangerous HTTP method enabled: TRACE",
+      "severity": "LOW",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-650",
+      "cvss": 3.5,
+      "location": "http://danishdhanjal.xyz/",
+      "description": "The server appears to accept the TRACE method.",
+      "evidence": "TRACE http://danishdhanjal.xyz/ -> HTTP 308",
+      "impact": "TRACE can enable Cross-Site Tracing (XST).",
+      "remediation": "Disable TRACE unless explicitly required.",
+      "references": [
+        "https://cwe.mitre.org/data/definitions/650.html"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": ""
+    },
+    {
+      "id": "SEC-HEADERS-006",
+      "title": "Missing Permissions-Policy",
+      "severity": "INFO",
+      "owasp": "A05:2021 - Security Misconfiguration",
+      "cwe": "CWE-693",
+      "cvss": 2.0,
+      "location": "http://danishdhanjal.xyz/",
+      "description": "The response is missing the 'permissions-policy' header.",
+      "evidence": "Response headers: cache-control, content-type, date, server, transfer-encoding, x-vercel-challenge-token, x-vercel-id, x-vercel-mitigated",
+      "impact": "Powerful browser features are not explicitly restricted.",
+      "remediation": "Add a Permissions-Policy header disabling unused features.",
+      "references": [
+        "https://owasp.org/www-project-secure-headers/"
+      ],
+      "confidence": "CONFIRMED",
+      "poc": ""
+    }
+  ]
+}

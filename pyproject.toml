@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "webrecon"
+version = "0.1.0"
+description = "WebRecon — a from-scratch Python CLI web vulnerability scanner (authorized testing only)."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "WebRecon" }]
+dependencies = [
+    "requests>=2.31",
+    "beautifulsoup4>=4.12",
+    "dnspython>=2.4",
+    "jinja2>=3.1",
+    "rich>=13.7",
+    "PyYAML>=6.0",
+]
+
+[project.scripts]
+webrecon = "webrecon.cli:main"
+webrecon-gui = "webrecon.gui:main"
+
+[tool.setuptools]
+packages = [
+    "webrecon",
+    "webrecon.core",
+    "webrecon.recon",
+    "webrecon.checks",
+    "webrecon.model",
+    "webrecon.report",
+    "webrecon.data",
+    "webrecon.cicd",
+    "webrecon.mlscan",
+    "webrecon.reliability",
+    "webrecon.templates_engine",
+    "webrecon.browser",
+]
+
+[tool.setuptools.package-data]
+"webrecon.report" = ["templates/*.j2"]
+"webrecon.data" = ["payloads/*.txt", "wordlists/*.txt", "signatures/*.txt", "templates/*.yaml"]

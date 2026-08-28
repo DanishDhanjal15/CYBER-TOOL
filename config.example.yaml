@@ -1,0 +1,20 @@
+# WebRecon example configuration. Copy to config.yaml and pass with --config.
+output_dir: ./reports
+formats: [console, html, json]
+# checks: [headers, cookies, sqli, xss]   # omit => run all checks
+aggressive: false        # true enables intrusive tests (time-based SQLi etc.)
+threads: 10
+timeout: 10
+rate_limit: 0            # requests/sec; 0 = unlimited
+depth: 2                 # crawl depth
+max_urls: 200
+respect_robots: false
+verbose: false
+user_agent: "WebRecon/0.1 (+authorized-security-scan)"
+
+# --- Strix-inspired additions ---
+profile: ""              # "", quick, standard, or deep (expands depth/scope)
+openapi: ""              # path or URL to an OpenAPI/Swagger spec to seed API params
+cookie: ""               # raw Cookie header for authenticated (grey-box) scans
+extra_headers: {}        # e.g. { "X-Api-Key": "abc", "Authorization": "Bearer .." }
+# formats may include: console, html, json, sarif

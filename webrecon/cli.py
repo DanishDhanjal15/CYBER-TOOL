@@ -150,6 +150,11 @@ def _run_scan(args) -> int:
         from webrecon.report import sarif_report
         p = sarif_report.write(result, out_dir / f"{stem}.sarif")
         console.print(f"[dim]SARIF report:[/] {p}")
+    if "har" in cfg.formats:
+        from webrecon.report import har_report
+        p = har_report.write(result, out_dir / f"{stem}.har")
+        console.print(f"[dim]HAR traffic log:[/] {p} "
+                      f"({len(result.transactions)} transactions)")
 
     # Persist to history + optional baseline/diff.
     if not cfg.no_store:
@@ -264,6 +269,43 @@ def _run_predict(args) -> int:
     return _emit(result, args.output, f"predict-{path.stem}", formats, console)
 
 
+def _run_request(args) -> int:
+    """Manual HTTP requester — send one request, show raw request + response."""
+    console = Console()
+    from webrecon.core.http_client import HttpClient
+    from webrecon.core.http_trace import render_request, render_response
+    cfg = Config()
+    headers = _parse_headers(args.header, args.auth_bearer)
+    if headers:
+        cfg.extra_headers = headers
+    if args.timeout:
+        cfg.timeout = args.timeout
+    http = HttpClient(cfg)
+    kwargs = {"allow_redirects": args.follow}
+    if args.data is not None:
+        kwargs["data"] = args.data
+    resp = http.request(args.method.upper(), args.url, **kwargs)
+    txn = http.last_transaction()
+    if txn is None:
+        console.print("[red]Request failed (no response).[/]")
+        return 1
+    console.print("[bold cyan]── REQUEST ──[/]")
+    console.print(f"[dim]{render_request(txn)}[/]")
+    console.print("\n[bold cyan]── RESPONSE ──[/]")
+    status = txn.get("status", 0)
+    color = "green" if 200 <= status < 300 else ("yellow" if status < 400 else "red")
+    console.print(f"[{color}]{render_response(txn)}[/]")
+    http.close()
+    return 0
+
+
+def _run_proxy(args) -> int:
+    console = Console()
+    from webrecon.proxy import run_proxy
+    return run_proxy(host=args.host, port=args.port, out=args.output,
+                     mitm=args.mitm, console=console)
+
+
 def _run_monitor(args) -> int:
     console = Console()
     console.print("[bold cyan]WebRecon · continuous monitoring[/]")
@@ -369,7 +411,7 @@ def build_parser() -> argparse.ArgumentParser:
     scan.add_argument("-o", "--output", default="./reports",
                       help="Report output directory (default: ./reports)")
     scan.add_argument("-f", "--format", default="html,json",
-                      help="Comma list of report formats: html,json,sarif")
+                      help="Comma list of report formats: html,json,sarif,har")
     scan.add_argument("--profile", choices=["quick", "standard", "deep"],
                       default=None,
                       help="Preset depth/scope: quick, standard, or deep")
@@ -487,6 +529,29 @@ def build_parser() -> argparse.ArgumentParser:
                      help="Confirm you are authorized to scan these targets")
     mon.add_argument("-v", "--verbose", action="store_true")
     mon.set_defaults(func=_run_monitor)
+
+    req = sub.add_parser("request", help="Send one HTTP request; show raw req+resp.")
+    req.add_argument("url", help="Target URL")
+    req.add_argument("-X", "--method", default="GET", help="HTTP method")
+    req.add_argument("-H", "--header", action="append", default=None,
+                     metavar="K: V", help="Request header (repeatable)")
+    req.add_argument("-d", "--data", default=None, help="Request body")
+    req.add_argument("--auth-bearer", default=None, metavar="TOKEN")
+    req.add_argument("--follow", action="store_true", help="Follow redirects")
+    req.add_argument("--timeout", type=int, default=10)
+    req.set_defaults(func=_run_request)
+
+    prx = sub.add_parser("proxy",
+                         help="Run an intercepting proxy that logs all traffic.")
+    prx.add_argument("-p", "--port", type=int, default=8081, help="Listen port")
+    prx.add_argument("--host", default="127.0.0.1", help="Listen host")
+    prx.add_argument("-o", "--output", default="proxy-traffic.har",
+                     help="HAR file to write captured traffic to")
+    prx.add_argument("--mitm", action="store_true",
+                     help="Decrypt HTTPS (generates a CA to trust; needs "
+                          "'cryptography'). Without it, HTTPS is tunnelled/"
+                          "metadata-only.")
+    prx.set_defaults(func=_run_proxy)
 
     hist = sub.add_parser("history", help="List past scans from the history DB.")
     hist.add_argument("--db", default="webrecon.db", help="History DB path")

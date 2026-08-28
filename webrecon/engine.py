@@ -170,6 +170,12 @@ class Engine:
                       f"{len(chains)} attack chain(s)")
         result.extend(chains)
 
+        # ---- Attach raw request/response evidence to each finding --------
+        from webrecon.core.http_trace import attach_evidence
+        attach_evidence(result.findings, self.http.transactions)
+        # Keep the traffic log on the result for HAR export.
+        result.transactions = list(self.http.transactions)
+
         # ---- Finalise ----------------------------------------------------
         finished = datetime.now(timezone.utc)
         result.finished_at = finished.isoformat()
@@ -180,6 +186,7 @@ class Engine:
             "params_found": len(crawl_data.param_targets()),
             "requests_sent": self.http.request_count,
             "checks_run": len(checks),
+            "transactions_logged": len(self.http.transactions),
         }
         if oast_server is not None:
             result.stats["oast_interactions"] = oast_server.total()

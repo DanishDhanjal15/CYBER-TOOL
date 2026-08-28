@@ -39,6 +39,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["pytest>=7.0"]
 browser = ["playwright>=1.40"]
+proxy = ["cryptography>=41.0"]   # HTTPS MITM in `webrecon proxy --mitm`
 
 [project.urls]
 Homepage = "https://github.com/DanishDhanjal15/CYBER-TOOL"

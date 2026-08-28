@@ -65,6 +65,16 @@
   code{background:#0c1018;padding:1px 5px;border-radius:4px}
   .conf{font-size:11px;font-weight:800;padding:2px 7px;border-radius:5px;
     background:#0d1220;border:1px solid var(--line);color:var(--low)}
+  details.httpx{margin-top:10px;border:1px solid var(--line);border-radius:8px;
+    background:#0b0f18}
+  details.httpx summary{cursor:pointer;padding:8px 12px;font-size:13px;
+    color:var(--muted);user-select:none}
+  details.httpx summary:hover{color:var(--text)}
+  .httprow{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 12px 12px}
+  .httplbl{font-size:11px;text-transform:uppercase;letter-spacing:.05em;
+    color:var(--muted);margin:6px 0 4px}
+  .httprow pre{max-height:340px;overflow:auto;margin:0}
+  @media(max-width:720px){.httprow{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -120,6 +130,13 @@
     <div class="kv"><b>Impact</b> {{ f.impact }}</div>
     <div class="kv"><b>Remediation</b> {{ f.remediation }}</div>
     {% if f.poc %}<div class="kv"><b>Proof / PoC</b><div class="ev">{{ f.poc }}</div></div>{% endif %}
+    {% if f.request_raw or f.response_raw %}
+    <details class="httpx"><summary>HTTP request &amp; response</summary>
+      <div class="httprow">
+        <div><div class="httplbl">Request</div><pre class="ev">{{ f.request_raw }}</pre></div>
+        <div><div class="httplbl">Response</div><pre class="ev">{{ f.response_raw }}</pre></div>
+      </div>
+    </details>{% endif %}
     {% if f.references %}<div class="kv"><b>References</b>
       {% for r in f.references %}<a href="{{ r }}" style="color:var(--low)">{{ r }}</a>{% if not loop.last %}, {% endif %}{% endfor %}
     </div>{% endif %}

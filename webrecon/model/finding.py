@@ -26,6 +26,9 @@ class Finding:
     # Validation-first fields (inspired by dynamic-exploitation scanners):
     confidence: str = "CONFIRMED"   # CONFIRMED / PROBABLE / POTENTIAL
     poc: str = ""                   # copy-paste reproduction (e.g. a curl cmd)
+    # Raw HTTP evidence (ZAP-style request/response for this finding):
+    request_raw: str = ""
+    response_raw: str = ""
 
     def rule_key(self) -> str:
         """The check/rule this finding came from (id without its numeric index)."""
@@ -64,6 +67,7 @@ class ScanResult:
     findings: list[Finding] = field(default_factory=list)
     recon: dict = field(default_factory=dict)   # raw recon info (dns, ports, tls...)
     stats: dict = field(default_factory=dict)   # crawled counts, requests sent...
+    transactions: list = field(default_factory=list)  # full HTTP traffic log (HAR)
 
     def add(self, finding: Finding) -> None:
         self.findings.append(finding)

@@ -254,6 +254,34 @@ python -m webrecon scan https://example.com --authorize --no-store
 Flags: `--db <path>` (history DB, default `webrecon.db`), `--no-store`,
 `--diff`, `--baseline`, `--cve-db <path>`.
 
+## Request / response inspection (ZAP-style)
+
+Every finding carries the **exact raw HTTP request and response** that produced
+it — shown as an expandable pane in the HTML report — and the whole scan's
+traffic can be exported and replayed.
+
+```bash
+# Save the full traffic log as HAR (open in Chrome DevTools or Burp)
+webrecon scan https://example.com --authorize -f html,json,har
+
+# Send one custom request and see the raw request + response (like ZAP Requester)
+webrecon request https://example.com/api -X POST -H "X-Api-Key: abc" -d '{"a":1}'
+
+# Run an intercepting proxy — point your browser at it; all traffic is logged
+webrecon proxy -p 8081 -o traffic.har
+#   HTTP is fully logged; HTTPS is tunnelled (metadata only) by default.
+#   Add --mitm to decrypt HTTPS (generates a CA to trust; needs `cryptography`):
+webrecon proxy -p 8081 --mitm
+```
+
+- **Per-finding request/response** — the HTML report shows the sent request and
+  received response for each finding (no config needed).
+- **HAR export** (`-f har`) — a standard HAR 1.2 file of every request/response,
+  openable in browser dev-tools, Burp, or any HAR viewer.
+- **`request`** — a manual requester to craft/replay a single request.
+- **`proxy`** — an intercepting proxy that captures browser traffic to HAR;
+  `--mitm` decrypts HTTPS via a locally-generated CA.
+
 ## Continuous monitoring & alerts
 
 Keep watching a target (or a whole list) and get alerted the moment a **new**

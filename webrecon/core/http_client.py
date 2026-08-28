@@ -31,6 +31,38 @@ class HttpClient:
         self._lock = threading.Lock()
         self._last_request = 0.0
         self.request_count = 0
+        # Traffic log — every request/response, for HAR export + per-finding
+        # evidence (ZAP-style). Capped to avoid unbounded memory.
+        self.transactions: list[dict] = []
+        self._max_txns = 3000
+        self._max_body = 12000
+
+    def _record(self, method, url, kwargs, resp, elapsed_ms) -> None:
+        if len(self.transactions) >= self._max_txns:
+            return
+        body = kwargs.get("data") or kwargs.get("json") or ""
+        if isinstance(body, (dict, list)):
+            try:
+                from urllib.parse import urlencode
+                body = urlencode(body) if isinstance(body, dict) else str(body)
+            except Exception:
+                body = str(body)
+        req_headers = dict(self.session.headers)
+        req_headers.update(kwargs.get("headers") or {})
+        txn = {
+            "method": method, "url": url,
+            "req_headers": req_headers, "req_body": str(body)[:self._max_body],
+            "status": getattr(resp, "status_code", 0),
+            "resp_headers": dict(getattr(resp, "headers", {}) or {}),
+            "resp_body": (getattr(resp, "text", "") or "")[:self._max_body],
+            "time_ms": round(elapsed_ms, 1),
+        }
+        with self._lock:
+            self.transactions.append(txn)
+
+    def last_transaction(self) -> dict | None:
+        with self._lock:
+            return self.transactions[-1] if self.transactions else None
 
     def _throttle(self) -> None:
         if self.config.rate_limit and self.config.rate_limit > 0:
@@ -52,7 +84,11 @@ class HttpClient:
             try:
                 with self._lock:
                     self.request_count += 1
-                return self.session.request(method, url, **kwargs)
+                t0 = time.monotonic()
+                resp = self.session.request(method, url, **kwargs)
+                self._record(method, url, kwargs, resp,
+                             (time.monotonic() - t0) * 1000)
+                return resp
             except requests.RequestException as exc:
                 last_exc = exc
                 if attempt < retries:

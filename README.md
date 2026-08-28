@@ -51,11 +51,16 @@ one-file Windows download or Scoop instead? See [Install](#install). Full docs b
 ## Features
 
 **Reconnaissance**
-- DNS records (A/AAAA/MX/NS/TXT) + reverse DNS
+- DNS records (A/AAAA/MX/NS/TXT/**CAA**) + reverse DNS + **zone-transfer (AXFR) test**
+- **CT-log subdomain enumeration** (crt.sh) + prefix brute + dangling-CNAME takeover
+- **Wayback Machine** historical-URL discovery (`--wayback`) — feeds forgotten endpoints into the scan
+- **WHOIS / RDAP** domain intel + **ASN lookup** (Team Cymru)
+- **WAF / CDN detection** (edge fingerprint + block-behaviour probe)
 - Common-port TCP scan + banner grab
 - TLS/SSL certificate & protocol audit (expiry, self-signed, legacy TLS)
 - Technology fingerprinting (server/framework headers, meta generator)
-- robots.txt / sitemap.xml + sensitive-file exposure probe (`.env`, `.git`, backups…)
+- **Content / directory discovery** + robots.txt / sitemap.xml + sensitive-file probe (`.env`, `.git`, backups…)
+- **Cloud bucket exposure** (S3 / GCS / Azure), **security.txt**, **SRI**, leaky **HTML comments**
 
 **Vulnerability checks** (OWASP-aligned)
 
@@ -85,8 +90,16 @@ one-file Windows download or Scoop instead? See [Install](#install). Full docs b
 | `graphql`        | GraphQL introspection / IDE exposure               | A05   |
 | `templates`      | YAML template engine (extensible CVE/misconfig)    | —     |
 | `domxss`         | DOM-based XSS via real headless browser (Playwright) | A03 |
+| `waf`            | WAF / CDN detection (edge fingerprint)             | recon |
+| `csp`            | Deep CSP weakness analysis (bypassable policy)     | A05   |
+| `content`        | Directory / content discovery (admin, API, debug) | A05   |
+| `webrecon`       | security.txt, missing SRI, leaky HTML comments    | A05   |
+| `buckets`        | Public cloud bucket exposure (S3 / GCS / Azure)   | A05   |
 
-**Recon also flags:** subdomain takeover (dangling CNAME), missing/weak SPF·DMARC·DNSSEC (email spoofing), and deprecated TLS versions.
+**Recon also flags:** subdomain takeover (dangling CNAME), DNS zone transfer
+(AXFR), missing CAA, missing/weak SPF·DMARC·DNSSEC (email spoofing), and
+deprecated TLS versions — plus CT-log subdomains, Wayback URLs, WHOIS/RDAP,
+and ASN intel in the report's recon section.
 
 **Validation-first:** every finding carries a **confidence** level
 (`CONFIRMED` / `PROBABLE` / `POTENTIAL`) and, where applicable, a **copy-paste

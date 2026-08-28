@@ -32,6 +32,11 @@ from .templates_check import TemplateCheck
 from webrecon.browser.domxss import BrowserDomXssCheck
 from .cve_check import CveCheck
 from .ratelimit import RateLimitCheck
+from .cloud_buckets import CloudBucketCheck
+from .waf import WafCdnCheck
+from .csp_analyzer import CspAnalyzerCheck
+from .content_discovery import ContentDiscoveryCheck
+from .web_recon import WebReconCheck
 
 # Registry: order roughly reflects cost (cheap/passive first).
 _REGISTRY: list[type[Check]] = [
@@ -59,6 +64,11 @@ _REGISTRY: list[type[Check]] = [
     GraphqlCheck,
     CveCheck,
     RateLimitCheck,
+    WafCdnCheck,
+    CspAnalyzerCheck,
+    WebReconCheck,
+    ContentDiscoveryCheck,
+    CloudBucketCheck,
     TemplateCheck,
     BrowserDomXssCheck,
 ]

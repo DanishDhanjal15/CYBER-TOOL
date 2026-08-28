@@ -45,6 +45,7 @@ class Config:
     username: str = ""                      # comma list of usernames to try
     max_attempts: int = 200                 # hard cap on total login attempts
     rl_burst: int = 20                      # requests per rate-limit probe burst
+    wayback: bool = False                   # pull historical URLs from the Wayback Machine
     # Scan history / diff:
     db: str = "webrecon.db"                 # SQLite history database
     no_store: bool = False                  # skip saving to history

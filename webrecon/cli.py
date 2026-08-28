@@ -102,6 +102,7 @@ def _build_config(args) -> Config:
         username=args.username or None,
         max_attempts=args.max_attempts,
         rl_burst=args.rl_burst,
+        wayback=args.wayback or None,
     )
     extra = _parse_headers(args.header, args.auth_bearer)
     if extra:
@@ -416,6 +417,8 @@ def build_parser() -> argparse.ArgumentParser:
                       help="Cap on total brute-force login attempts (default 200)")
     scan.add_argument("--rl-burst", type=int, default=None, dest="rl_burst",
                       help="Requests per rate-limiting probe burst (default 20)")
+    scan.add_argument("--wayback", action="store_true",
+                      help="Discover historical URLs via the Wayback Machine (recon)")
     scan.add_argument("--aggressive", action="store_true",
                       help="Enable intrusive tests (e.g. time-based SQLi)")
     scan.add_argument("--threads", type=int, default=10, help="Concurrency")

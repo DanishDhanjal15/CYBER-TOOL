@@ -89,7 +89,17 @@ def scan(target: Target, http: HttpClient, *, threads: int = 20
         return info, findings
 
     apex = target.host
-    hosts = [f"{p}.{apex}" for p in _PREFIXES]
+    # Combine the prefix wordlist with real subdomains from CT logs (crt.sh).
+    hosts = {f"{p}.{apex}" for p in _PREFIXES}
+    try:
+        from webrecon.recon.ct_logs import enumerate_subdomains
+        ct = enumerate_subdomains(apex)
+        if ct:
+            info["ct_log_subdomains"] = len(ct)
+            hosts |= ct
+    except Exception:
+        pass
+    hosts = list(hosts)
     info["tested"] = len(hosts)
 
     def probe(host: str):

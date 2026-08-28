@@ -34,7 +34,9 @@ class Engine:
 
         # ---- Recon -------------------------------------------------------
         self._log("[bold cyan]>>[/] Recon: DNS")
-        result.recon["dns"] = dns_info.gather(self.target)
+        dns_data, dns_findings = dns_info.gather(self.target)
+        result.recon["dns"] = dns_data
+        result.extend(dns_findings)
 
         self._log("[bold cyan]>>[/] Recon: port scan")
         result.recon["ports"] = ports.scan(self.target, timeout=1.2,
@@ -67,6 +69,10 @@ class Engine:
             result.recon["email"] = email_info
             result.extend(email_findings)
 
+            self._log("[bold cyan]>>[/] Recon: WHOIS / RDAP / ASN")
+            from webrecon.recon import whois_asn
+            result.recon["whois"] = whois_asn.gather(self.target)
+
         # ---- Crawl -------------------------------------------------------
         self._log(f"[bold cyan]>>[/] Crawling (depth={self.config.depth}, "
                   f"max={self.config.max_urls}) ...")
@@ -82,6 +88,27 @@ class Engine:
         self._log(f"   found {crawl_data.url_count} URL(s), "
                   f"{crawl_data.form_count} form(s), "
                   f"{len(crawl_data.param_targets())} param(s)")
+
+        # ---- Wayback historical-URL discovery (domain targets) -----------
+        if not self.target.is_ip and self.config.wayback:
+            try:
+                from webrecon.recon.wayback import discover_urls
+                from urllib.parse import urlparse, parse_qs
+                hist = discover_urls(self.target.host, self.target.scheme,
+                                     limit=self.config.max_urls)
+                added = 0
+                for u in hist:
+                    if u not in crawl_data.urls and self.target.in_scope(u):
+                        crawl_data.urls.append(u)
+                        qs = parse_qs(urlparse(u).query)
+                        if qs:
+                            crawl_data.params.setdefault(u, list(qs.keys()))
+                        added += 1
+                if added:
+                    self._log(f"[bold cyan]>>[/] Wayback: added {added} "
+                              "historical URL(s)")
+            except Exception as exc:
+                self._log(f"   [red]Wayback lookup failed: {exc}[/]")
 
         # ---- OpenAPI / Swagger seeding (optional) ------------------------
         if self.config.openapi:

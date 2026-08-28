@@ -254,6 +254,41 @@ python -m webrecon scan https://example.com --authorize --no-store
 Flags: `--db <path>` (history DB, default `webrecon.db`), `--no-store`,
 `--diff`, `--baseline`, `--cve-db <path>`.
 
+## 🚀 Pre-deploy security gate (scan before you ship)
+
+WebRecon's flagship feature: **catch vulnerabilities on `localhost` *before* you
+deploy.** It auto-detects your running dev server, runs a fast local scan, and
+gives a clear **go/no-go verdict** with a CI-friendly exit code — so a broken
+build never reaches production.
+
+```bash
+# Start your app (npm run dev / flask run / …), then:
+webrecon predeploy                       # auto-detects the dev port and scans it
+webrecon predeploy http://localhost:3000 # or point it explicitly
+webrecon predeploy --fail-on critical    # only block on CRITICAL
+
+# Make it automatic — a git hook that scans before every push:
+webrecon predeploy --install-hook
+```
+
+```
+┌──────────── WebRecon · Pre-Deploy Gate ────────────┐
+│    Verdict  ❌  DEPLOY BLOCKED — 3 issue(s) ≥ HIGH  │
+│ Risk score  100/100 (CRITICAL)                     │
+│   Findings  CRITICAL:1 · HIGH:2 · MEDIUM:5 · …      │
+│       Gate  fail-on = HIGH                          │
+└────────────────────────────────────────────────────┘
+```
+
+- **Auto-detect** — probes common dev ports (3000, 5173, 8080, 8000, 5000,
+  4200, …) and finds your running app; no URL needed.
+- **Local-optimized** — skips external recon (subdomains/WHOIS/Wayback) that
+  doesn't apply to localhost; auto-authorized (it's your own machine).
+- **Gate** — `--fail-on {critical,high,medium,low}` → exit code `1` blocks the
+  deploy; `0` means ship it. Drop it straight into a deploy script or CI step.
+- **Git hook** — `--install-hook` adds a `pre-push` gate (bypass once with
+  `git push --no-verify`).
+
 ## Request / response inspection (ZAP-style)
 
 Every finding carries the **exact raw HTTP request and response** that produced

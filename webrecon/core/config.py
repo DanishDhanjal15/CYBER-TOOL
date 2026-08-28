@@ -46,6 +46,8 @@ class Config:
     max_attempts: int = 200                 # hard cap on total login attempts
     rl_burst: int = 20                      # requests per rate-limit probe burst
     wayback: bool = False                   # pull historical URLs from the Wayback Machine
+    local_scan: bool = False                # dev/localhost mode — skip external recon
+    fail_on: str = ""                       # predeploy gate: min severity to fail on
     # Scan history / diff:
     db: str = "webrecon.db"                 # SQLite history database
     no_store: bool = False                  # skip saving to history

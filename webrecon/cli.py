@@ -306,6 +306,16 @@ def _run_proxy(args) -> int:
                      mitm=args.mitm, console=console)
 
 
+def _run_predeploy(args) -> int:
+    console = Console()
+    from webrecon import predeploy
+    if args.install_hook:
+        return predeploy.install_hook(console)
+    console.print("[bold cyan]WebRecon · Pre-Deploy Security Gate[/]")
+    return predeploy.run_predeploy(args.url, args.fail_on, console,
+                                   profile=args.profile, no_store=args.no_store)
+
+
 def _run_monitor(args) -> int:
     console = Console()
     console.print("[bold cyan]WebRecon · continuous monitoring[/]")
@@ -529,6 +539,22 @@ def build_parser() -> argparse.ArgumentParser:
                      help="Confirm you are authorized to scan these targets")
     mon.add_argument("-v", "--verbose", action="store_true")
     mon.set_defaults(func=_run_monitor)
+
+    pd = sub.add_parser("predeploy",
+                        help="Pre-deploy gate: auto-scan your LOCAL app, "
+                             "pass/fail on findings.")
+    pd.add_argument("url", nargs="?", default=None,
+                    help="Local app URL (auto-detected if omitted)")
+    pd.add_argument("--fail-on", default="high", dest="fail_on",
+                    choices=["critical", "high", "medium", "low"],
+                    help="Block deploy if a finding at/above this severity exists")
+    pd.add_argument("--profile", choices=["quick", "standard", "deep"],
+                    default="standard", help="Scan depth (default standard)")
+    pd.add_argument("--no-store", action="store_true",
+                    help="Do not save this scan to history")
+    pd.add_argument("--install-hook", action="store_true",
+                    help="Install a git pre-push hook that runs this gate")
+    pd.set_defaults(func=_run_predeploy)
 
     req = sub.add_parser("request", help="Send one HTTP request; show raw req+resp.")
     req.add_argument("url", help="Target URL")

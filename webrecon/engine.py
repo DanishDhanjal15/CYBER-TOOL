@@ -56,7 +56,14 @@ class Engine:
         result.recon["files"] = files_info
         result.extend(files_findings)
 
-        if not self.target.is_ip:
+        # External recon (subdomains/email/whois/buckets) is meaningless for a
+        # local dev server or a loopback host — skip it in predeploy/local mode.
+        _loopback = self.target.host.lower() in ("localhost", "127.0.0.1", "::1",
+                                                 "0.0.0.0")
+        _external_ok = (not self.target.is_ip and not _loopback
+                        and not getattr(self.config, "local_scan", False))
+
+        if _external_ok:
             self._log("[bold cyan]>>[/] Recon: subdomains / takeover")
             from webrecon.recon import subdomains, email_security
             sub_info, sub_findings = subdomains.scan(

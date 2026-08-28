@@ -1,6 +1,14 @@
 ;echo CMD""INJXOK
 |echo CMD""INJXOK
+||echo CMD""INJXOK
 &&echo CMD""INJXOK
+&echo CMD""INJXOK
 `echo CMD""INJXOK`
 $(echo CMD""INJXOK)
 ;echo CMD''INJXOK
+%0aecho CMD""INJXOK
+| echo CMD""INJXOK
+'; echo CMD""INJXOK; '
+"; echo CMD""INJXOK; "
+$(echo CMD``INJXOK)
+;printf CMD""INJXOK

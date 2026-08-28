@@ -14,6 +14,11 @@ def load_lines(relpath: str) -> tuple[str, ...]:
     lines: list[str] = []
     for raw in path.read_text(encoding="utf-8").splitlines():
         line = raw.strip()
-        if line and not line.startswith("#"):
-            lines.append(line)
+        if not line:
+            continue
+        # Comment lines start with '# ' or a lone '#' — but NOT payloads like
+        # '#{7*7}' (Ruby/Thymeleaf SSTI) or '#!/...'.
+        if line == "#" or (line.startswith("#") and line[1:2] in (" ", "\t", "#")):
+            continue
+        lines.append(line)
     return tuple(lines)

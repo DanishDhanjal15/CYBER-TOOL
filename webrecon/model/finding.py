@@ -1,7 +1,10 @@
 """The Finding data model — every detection is normalised into this shape."""
 from __future__ import annotations
 
+import hashlib
+import re
 from dataclasses import dataclass, field, asdict
+from urllib.parse import urlparse
 
 from .severity import Severity
 
@@ -24,9 +27,27 @@ class Finding:
     confidence: str = "CONFIRMED"   # CONFIRMED / PROBABLE / POTENTIAL
     poc: str = ""                   # copy-paste reproduction (e.g. a curl cmd)
 
+    def rule_key(self) -> str:
+        """The check/rule this finding came from (id without its numeric index)."""
+        return re.sub(r"-\d+[A-Za-z]?$", "", self.id) or self.id
+
+    def fingerprint(self) -> str:
+        """A stable id for the *same logical issue* across scans.
+
+        Built from the rule, the host+path (query values dropped), and the
+        title (which carries the affected parameter). Lets us dedupe within a
+        scan and diff New/Fixed across scans.
+        """
+        parsed = urlparse(self.location or "")
+        loc = f"{parsed.netloc}{parsed.path}" if parsed.netloc else \
+            (self.location or "")
+        basis = f"{self.rule_key()}|{loc}|{self.title}"
+        return hashlib.sha1(basis.encode("utf-8")).hexdigest()[:16]
+
     def to_dict(self) -> dict:
         d = asdict(self)
         d["severity"] = self.severity.value
+        d["fingerprint"] = self.fingerprint()
         return d
 
     def __str__(self) -> str:

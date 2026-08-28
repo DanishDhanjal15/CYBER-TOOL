@@ -1,12 +1,44 @@
 # WebRecon
 
-A from-scratch **Python CLI web vulnerability scanner**. Point it at a URL or IP
-and it runs reconnaissance plus a battery of common web attack checks, then
-produces a color-coded terminal summary and detailed **HTML + JSON** reports.
+**A from-scratch, offline Python CLI web-security scanner + vulnerability-management toolkit.**
+Point it at a URL or IP and it runs reconnaissance plus 26+ web attack checks,
+prioritises findings by real exploitability (CVE/EPSS/KEV + Exploit-DB),
+tracks them over time, and can continuously monitor and alert — all locally,
+with no cloud and no paid APIs.
+
+![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
+![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)
+![Platform](https://img.shields.io/badge/platform-windows%20%7C%20linux%20%7C%20macos-lightgrey.svg)
+![Status](https://img.shields.io/badge/status-beta-orange.svg)
 
 > ⚠️ **Authorized testing only.** Use WebRecon strictly against systems you own
-> or have **explicit written permission** to test. Unauthorized scanning may be
-> illegal. The tool asks you to confirm authorization before every scan.
+> or have **explicit written permission** to test. Unauthorized scanning,
+> brute-forcing, or exploitation may be illegal. The tool asks you to confirm
+> authorization before every scan. See [LICENSE](LICENSE) and [SECURITY.md](SECURITY.md).
+
+## Quick start
+
+```bash
+git clone https://github.com/DanishDhanjal15/CYBER-TOOL.git
+cd CYBER-TOOL
+python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -e .
+
+python -m webrecon scan http://testphp.vulnweb.com --authorize   # a public, authorized test target
+python -m webrecon list-checks
+```
+
+Reports land in `./reports/` (open the `.html` in a browser). Full docs below.
+
+## Contents
+
+- [Features](#features) · [GUI](#gui-dark-theme) · [CLI usage](#cli-usage)
+- [Rate-limiting audit](#rate-limiting-audit--algorithm-advice) ·
+  [Brute-force audit](#weak-credential--brute-force-audit-opt-in) ·
+  [Continuous monitoring](#continuous-monitoring--alerts)
+- [Scan history & diff](#scan-history-diff--prioritization-vuln-management-features) ·
+  [ML / CI-CD / failure-prediction analyzers](#beyond-web-scanning--three-more-analyzers)
+- [Contributing](CONTRIBUTING.md) · [Changelog](CHANGELOG.md) · [Code of Conduct](CODE_OF_CONDUCT.md)
 
 ---
 
@@ -78,6 +110,130 @@ pip install -r requirements.txt
 # or install as a command:
 pip install -e .
 ```
+
+## Rate-limiting audit + algorithm advice
+
+The `ratelimit` check (runs by default) sends a short polite burst to
+representative endpoints — homepage, login forms, and a diverse sample of API /
+search / param URLs — and detects whether the server throttles (HTTP 429,
+`RateLimit-*` / `Retry-After` headers, or a "too many requests" body). It stops
+as soon as throttling is seen.
+
+Crucially, for every endpoint it also **recommends the right algorithm for that
+endpoint type** and where to enforce it:
+
+| Endpoint type | Recommended algorithm | Why |
+|---------------|-----------------------|-----|
+| **auth / login** | Sliding Window Counter (per-account) + per-IP + exponential backoff | resist credential stuffing; no window-edge burst |
+| **read API** | Token Bucket (per API key/IP) | allows short bursts, smooth refill |
+| **write / mutation** | Sliding Window Counter (tighter limits) | accurate, stops spam |
+| **search / export** | Leaky Bucket (constant drain) | protects the backend from spikes |
+| **upload** | Token Bucket + per-user quota | caps bandwidth/storage abuse |
+| **general** | Sliding Window Counter (per IP) | accurate, cheap default |
+
+A missing limiter on a **login** endpoint is a **HIGH** finding (brute-force /
+credential-stuffing surface); on other endpoints it scales MEDIUM→LOW. When
+rate limiting *is* present, it's reported as INFO with the detected mechanism.
+Tune the burst size with `--rl-burst` (default 20).
+
+## Weak-credential / brute-force audit (opt-in)
+
+Test a login form against a password list and flag any account that accepts a
+weak password, so you can change it. **Opt-in and authorized-only** — it never
+runs in a normal scan.
+
+```bash
+# Try the bundled top-100 weak passwords against common usernames
+python -m webrecon scan https://example.com --authorize --bruteforce
+
+# Use rockyou.txt (or any list); cap total attempts; target a username
+python -m webrecon scan https://example.com --authorize --bruteforce \
+    --wordlist /path/to/rockyou.txt --username admin --max-attempts 500
+```
+
+**Safety rails (built in):**
+- Never runs by default — only with `--bruteforce` (or `--checks bruteforce`),
+  on top of the standard `--authorize` gate.
+- **Attempt cap** (`--max-attempts`, default 200). rockyou has millions of
+  entries; realistic *online* guessing tests the top-N — testing all of them
+  would trigger lockout and act as a DoS.
+- **Stops on lockout** — if the target signals account lockout / rate limiting,
+  it stops and reports that as a *positive* control.
+- If a weak password is accepted → **CRITICAL** finding with a "change it now +
+  add lockout/rate-limit/MFA" remediation. If many attempts run with **no**
+  lockout at all → a **MEDIUM** "no brute-force protection" finding.
+
+## Scan history, diff & prioritization (vuln-management features)
+
+Every scan is saved to a local SQLite database, so you can track a target over
+time, see only what changed, and prioritise by real exploitability.
+
+```bash
+# First scan — save it as the baseline for this target
+python -m webrecon scan https://example.com --authorize --baseline
+
+# Later scan — show only what's NEW or FIXED since the baseline
+python -m webrecon scan https://example.com --authorize --diff
+
+# List past scans (risk score + severity counts + which is the baseline)
+python -m webrecon history
+python -m webrecon history --target https://example.com
+
+# One-off scan without touching history
+python -m webrecon scan https://example.com --authorize --no-store
+```
+
+**What runs automatically on every scan:**
+- **Dedup** — duplicate detections of the same issue collapse into one (noise ↓).
+- **Correlation / attack chains** — related findings combine into higher-signal
+  meta-findings (e.g. *exposed .env + hard-coded AWS key → credential-exposure
+  chain*, *XSS + no CSP*, *multiple RCE-class injections*).
+- **CVE matching (`cve` check)** — product/library versions from banners and JS
+  bundles are matched to a bundled CVE database and ranked by **EPSS**
+  (exploit probability) and **CISA KEV** (proven exploited in the wild). Extend
+  it with `--cve-db <your.json>`.
+- **Exploit intelligence** — each matched CVE is enriched with public-exploit
+  availability: **Exploit-DB** IDs, **Metasploit** module presence, and (if the
+  local `searchsploit` CLI is installed) a live offline Exploit-DB search. A CVE
+  with a working exploit is tagged **`[EXPLOIT AVAILABLE]`**, marked CONFIRMED,
+  and — when it's also KEV — escalated to CRITICAL, because it's low-effort for
+  an attacker. Findings link straight to the Exploit-DB entry. *(VulnDB is a
+  paid product with no free API; the free equivalents used here are Exploit-DB,
+  Metasploit, and NVD.)*
+
+Flags: `--db <path>` (history DB, default `webrecon.db`), `--no-store`,
+`--diff`, `--baseline`, `--cve-db <path>`.
+
+## Continuous monitoring & alerts
+
+Keep watching a target (or a whole list) and get alerted the moment a **new**
+vulnerability appears. Each cycle scans, diffs against the previous scan, and
+fires alerts only on new findings — the first scan becomes the baseline.
+
+```bash
+# Watch one target every hour; alert on new HIGH/CRITICAL findings via Slack/Discord
+python -m webrecon monitor https://example.com --authorize \
+    --interval 1h --min-severity high \
+    --webhook https://hooks.slack.com/services/XXX/YYY/ZZZ
+
+# Watch many targets from a file, log alerts to a JSONL file
+python -m webrecon monitor --targets-file targets.txt --authorize \
+    --interval 30m --log-file alerts.jsonl
+
+# Single cycle (for cron / CI / testing) instead of a persistent loop
+python -m webrecon monitor https://example.com --authorize --once --webhook <url>
+
+# Email alerts (SMTP)
+python -m webrecon monitor https://example.com --authorize --interval 6h \
+    --email-to you@corp.com --smtp-host smtp.corp.com \
+    --smtp-user bot --smtp-pass '***'
+```
+
+**Alert channels:** console (always), **webhook** (Slack / Discord / Teams /
+generic JSON — auto-detected), **JSONL log file**, and **SMTP email**. A broken
+channel never stops the loop. `--min-severity` gates what's worth alerting on;
+`--profile quick|standard|deep` sets scan depth per cycle. Run it under your OS
+scheduler (systemd/Task Scheduler) or leave it running — Ctrl+C stops it.
 
 ## Beyond web scanning — three more analyzers
 

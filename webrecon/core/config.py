@@ -38,6 +38,18 @@ class Config:
     oast: bool = False                      # start a local OAST listener
     oast_host: str = ""                     # public host:port to advertise to target
     browser: bool = False                   # enable headless-browser DOM checks
+    cve_db: str = ""                        # path to a custom CVE JSON DB
+    # Weak-credential / brute-force audit (opt-in, authorized only):
+    bruteforce: bool = False                # enable the login brute-force check
+    wordlist: str = ""                      # password list (default: bundled top-100)
+    username: str = ""                      # comma list of usernames to try
+    max_attempts: int = 200                 # hard cap on total login attempts
+    rl_burst: int = 20                      # requests per rate-limit probe burst
+    # Scan history / diff:
+    db: str = "webrecon.db"                 # SQLite history database
+    no_store: bool = False                  # skip saving to history
+    diff: bool = False                      # show New/Fixed vs previous scan
+    baseline: bool = False                  # mark this scan as the baseline
 
     def apply_profile(self) -> "Config":
         """Expand a named profile into concrete settings (explicit CLI flags,

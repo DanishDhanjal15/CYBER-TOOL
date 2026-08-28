@@ -113,6 +113,12 @@ class Engine:
         # ---- Checks ------------------------------------------------------
         checks = (checks_by_names(self.config.checks)
                   if self.config.checks else all_checks())
+        # Opt-in brute-force: add it when explicitly enabled via --bruteforce.
+        if getattr(self.config, "bruteforce", False) and \
+                not any(c.name == "bruteforce" for c in checks):
+            checks = checks + checks_by_names(["bruteforce"])
+            self._log("[yellow]>>[/] Brute-force audit enabled (opt-in, "
+                      f"max {getattr(self.config, 'max_attempts', 200)} attempts)")
         self._log(f"[bold cyan]>>[/] Running {len(checks)} vulnerability check(s)")
         for check in checks:
             try:
@@ -124,6 +130,18 @@ class Engine:
             if new:
                 self._log(f"   [yellow]{check.name}[/]: {len(new)} finding(s)")
             result.extend(new)
+
+        # ---- Analysis: dedupe + correlate into attack chains -------------
+        from webrecon.analysis.dedup import dedup
+        from webrecon.analysis.correlate import correlate
+        raw_count = len(result.findings)
+        result.findings = dedup(result.findings)
+        chains = correlate(result.findings)
+        if raw_count != len(result.findings) or chains:
+            self._log(f"[bold cyan]>>[/] Analysis: {raw_count} -> "
+                      f"{len(result.findings)} after dedup, "
+                      f"{len(chains)} attack chain(s)")
+        result.extend(chains)
 
         # ---- Finalise ----------------------------------------------------
         finished = datetime.now(timezone.utc)

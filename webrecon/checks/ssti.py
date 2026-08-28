@@ -12,6 +12,7 @@ from webrecon.core.config import Config
 from webrecon.core.crawler import CrawlData
 from webrecon.core.http_client import HttpClient
 from webrecon.core.target import Target
+from webrecon.data import load_lines
 from webrecon.model.finding import Finding
 from webrecon.model.severity import Severity
 
@@ -45,7 +46,7 @@ class SstiCheck(Check):
             base = send(http, point, "wrssti", baseline=True)
             base_body = (base.text or "") if base is not None else ""
 
-            for payload in _PAYLOADS:
+            for payload in load_lines("payloads/ssti.txt"):
                 if _EVAL in payload:      # safety: never use a payload with "49"
                     continue
                 resp = send(http, point, payload)

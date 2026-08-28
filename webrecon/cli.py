@@ -92,6 +92,16 @@ def _build_config(args) -> Config:
         oast=args.oast or None,
         oast_host=args.oast_host or None,
         browser=args.browser or None,
+        cve_db=args.cve_db or None,
+        db=args.db or None,
+        no_store=args.no_store or None,
+        diff=args.diff or None,
+        baseline=args.baseline or None,
+        bruteforce=args.bruteforce or None,
+        wordlist=args.wordlist or None,
+        username=args.username or None,
+        max_attempts=args.max_attempts,
+        rl_burst=args.rl_burst,
     )
     extra = _parse_headers(args.header, args.auth_bearer)
     if extra:
@@ -140,11 +150,51 @@ def _run_scan(args) -> int:
         p = sarif_report.write(result, out_dir / f"{stem}.sarif")
         console.print(f"[dim]SARIF report:[/] {p}")
 
+    # Persist to history + optional baseline/diff.
+    if not cfg.no_store:
+        try:
+            from webrecon.storage.db import Store
+            store = Store(cfg.db)
+            prev_id = store.previous_scan_id(result.target)
+            scan_id = store.save_scan(result)
+            console.print(f"[dim]Saved to history:[/] {cfg.db} (scan #{scan_id})")
+            if cfg.baseline:
+                store.set_baseline(scan_id)
+                console.print(f"[dim]Marked scan #{scan_id} as baseline.[/]")
+            if cfg.diff:
+                base_id = store.baseline_scan_id(result.target) or prev_id
+                if base_id and base_id != scan_id:
+                    _print_diff(store, scan_id, base_id, console)
+                else:
+                    console.print("[dim]No previous scan to diff against.[/]")
+            store.close()
+        except Exception as exc:
+            console.print(f"[red]History store error:[/] {exc}")
+
     # CI-friendly exit code: non-zero if High/Critical present.
     counts = result.counts()
     if counts[Severity.CRITICAL.value] or counts[Severity.HIGH.value]:
         return 1
     return 0
+
+
+def _print_diff(store, current_id, baseline_id, console) -> None:
+    from webrecon.analysis.diff import diff_scans
+    from rich.table import Table
+    d = diff_scans(store, current_id, baseline_id)
+    s = d["summary"]
+    console.print(f"\n[bold]Diff vs scan #{baseline_id}:[/] "
+                  f"[red]+{s['new']} new[/], [green]-{s['fixed']} fixed[/], "
+                  f"{s['unchanged']} unchanged")
+    if d["new"]:
+        t = Table(title="NEW findings", show_header=True, header_style="bold red")
+        t.add_column("Sev"); t.add_column("Title"); t.add_column("Location")
+        for f in d["new"][:30]:
+            t.add_row(f["severity"], f["title"], f["location"] or "-")
+        console.print(t)
+    if d["fixed"]:
+        console.print(f"[green]Fixed since baseline:[/] "
+                      + ", ".join(f["title"] for f in d["fixed"][:10]))
 
 
 def _emit(result, out_dir: str, name: str, formats, console) -> int:
@@ -213,6 +263,90 @@ def _run_predict(args) -> int:
     return _emit(result, args.output, f"predict-{path.stem}", formats, console)
 
 
+def _run_monitor(args) -> int:
+    console = Console()
+    console.print("[bold cyan]WebRecon · continuous monitoring[/]")
+    if not args.authorize:
+        console.print("[red]Pass --authorize to confirm you may scan these "
+                      "targets continuously.[/]")
+        return 3
+
+    targets = list(args.targets)
+    if args.targets_file:
+        try:
+            targets += [ln.strip() for ln in
+                        Path(args.targets_file).read_text(encoding="utf-8").splitlines()
+                        if ln.strip() and not ln.strip().startswith("#")]
+        except Exception as exc:
+            console.print(f"[red]Cannot read targets file:[/] {exc}")
+            return 2
+    if not targets:
+        console.print("[red]No targets given.[/]")
+        return 2
+
+    from webrecon.monitor.notify import Notifier
+    from webrecon.monitor.runner import run_monitor, parse_interval
+    try:
+        interval_s = parse_interval(args.interval)
+    except ValueError as exc:
+        console.print(f"[red]{exc}[/]")
+        return 2
+
+    cfg = Config()
+    if args.profile:
+        cfg.profile = args.profile
+        cfg.apply_profile()
+    cfg.apply_overrides(
+        authorized=True, db=args.db,
+        checks=([c.strip() for c in args.checks.split(",")] if args.checks else None),
+        verbose=args.verbose or None)
+
+    notifier = Notifier(webhook=args.webhook or "", log_file=args.log_file or "",
+                        email_to=args.email_to or "", smtp_host=args.smtp_host or "",
+                        smtp_port=args.smtp_port, smtp_user=args.smtp_user or "",
+                        smtp_pass=args.smtp_pass or "", console=console,
+                        min_severity=args.min_severity)
+
+    console.print(f"Targets: {len(targets)} · interval: {interval_s}s · "
+                  f"alert>= {args.min_severity} · "
+                  f"channels: {'webhook ' if args.webhook else ''}"
+                  f"{'email ' if args.email_to else ''}"
+                  f"{'log ' if args.log_file else ''}console")
+    if args.once:
+        console.print("[dim](single cycle: --once)[/]")
+    return run_monitor(targets, cfg, notifier, interval_s, args.once, console)
+
+
+def _run_history(args) -> int:
+    console = Console()
+    from webrecon.storage.db import Store
+    from rich.table import Table
+    from pathlib import Path as _P
+    if not _P(args.db).exists():
+        console.print(f"[yellow]No history database at[/] {args.db}")
+        return 0
+    store = Store(args.db)
+    scans = store.list_scans(target=args.target, limit=args.limit)
+    if not scans:
+        console.print("[yellow]No scans recorded yet.[/]")
+        store.close()
+        return 0
+    t = Table(title="Scan history", show_header=True, header_style="bold")
+    for col in ("#", "Target", "When", "Risk", "Findings", "C/H/M/L/I", "Base"):
+        t.add_column(col)
+    for s in scans:
+        import json as _j
+        c = _j.loads(s["counts_json"] or "{}")
+        chmli = "/".join(str(c.get(k, 0)) for k in
+                         ("CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO"))
+        t.add_row(str(s["id"]), s["target"], (s["started_at"] or "")[:19],
+                  f"{s['risk_score']}", str(s["total_findings"]), chmli,
+                  "★" if s["is_baseline"] else "")
+    console.print(t)
+    store.close()
+    return 0
+
+
 def _list_checks(_args) -> int:
     console = Console()
     console.print("[bold]Available checks:[/]")
@@ -245,6 +379,17 @@ def build_parser() -> argparse.ArgumentParser:
                            "endpoints")
     scan.add_argument("--templates", default=None, dest="templates_dir",
                       help="Extra directory of YAML detection templates")
+    scan.add_argument("--cve-db", default=None, dest="cve_db",
+                      help="Path to a custom CVE JSON database")
+    scan.add_argument("--db", default=None,
+                      help="SQLite history DB path (default: webrecon.db)")
+    scan.add_argument("--no-store", action="store_true",
+                      help="Do not save this scan to the history database")
+    scan.add_argument("--diff", action="store_true",
+                      help="Show New/Fixed findings vs the previous scan of this "
+                           "target")
+    scan.add_argument("--baseline", action="store_true",
+                      help="Mark this scan as the baseline for the target")
     scan.add_argument("--header", action="append", default=None, metavar="K: V",
                       help="Extra request header (repeatable), e.g. "
                            "--header 'X-Api-Key: abc'")
@@ -259,6 +404,18 @@ def build_parser() -> argparse.ArgumentParser:
                       help="Public host:port the target can reach for OAST callbacks")
     scan.add_argument("--browser", action="store_true",
                       help="Enable headless-browser DOM checks (needs Playwright)")
+    scan.add_argument("--bruteforce", action="store_true",
+                      help="Enable login weak-credential/brute-force audit (opt-in, "
+                           "authorized only)")
+    scan.add_argument("--wordlist", default=None,
+                      help="Password list for brute-force (e.g. rockyou.txt); "
+                           "default is a bundled top-100 list")
+    scan.add_argument("--username", default=None,
+                      help="Comma list of usernames to try (default: admin,root,...)")
+    scan.add_argument("--max-attempts", type=int, default=None, dest="max_attempts",
+                      help="Cap on total brute-force login attempts (default 200)")
+    scan.add_argument("--rl-burst", type=int, default=None, dest="rl_burst",
+                      help="Requests per rate-limiting probe burst (default 20)")
     scan.add_argument("--aggressive", action="store_true",
                       help="Enable intrusive tests (e.g. time-based SQLi)")
     scan.add_argument("--threads", type=int, default=10, help="Concurrency")
@@ -298,6 +455,41 @@ def build_parser() -> argparse.ArgumentParser:
     pred.add_argument("-o", "--output", default="./reports")
     pred.add_argument("-f", "--format", default="html,json", help="html,json")
     pred.set_defaults(func=_run_predict)
+
+    mon = sub.add_parser("monitor",
+                         help="Continuously scan target(s) and alert on new findings.")
+    mon.add_argument("targets", nargs="*", help="One or more URLs/IPs to monitor")
+    mon.add_argument("--targets-file", default=None,
+                     help="File with one target per line")
+    mon.add_argument("--interval", default="1h",
+                     help="Scan interval: 30s/5m/1h/1d (default 1h)")
+    mon.add_argument("--once", action="store_true",
+                     help="Run a single cycle and exit (for cron / testing)")
+    mon.add_argument("--min-severity", default="high",
+                     choices=["critical", "high", "medium", "low", "info"],
+                     help="Only alert on new findings at/above this severity")
+    mon.add_argument("--webhook", default=None,
+                     help="Webhook URL for alerts (Slack/Discord/Teams/generic)")
+    mon.add_argument("--log-file", default=None, help="Append alerts to a JSONL file")
+    mon.add_argument("--email-to", default=None)
+    mon.add_argument("--smtp-host", default=None)
+    mon.add_argument("--smtp-port", type=int, default=587)
+    mon.add_argument("--smtp-user", default=None)
+    mon.add_argument("--smtp-pass", default=None)
+    mon.add_argument("--profile", choices=["quick", "standard", "deep"],
+                     default="quick", help="Scan profile per cycle (default quick)")
+    mon.add_argument("--checks", default=None, help="Comma list of checks to run")
+    mon.add_argument("--db", default="webrecon.db", help="History DB path")
+    mon.add_argument("--authorize", action="store_true",
+                     help="Confirm you are authorized to scan these targets")
+    mon.add_argument("-v", "--verbose", action="store_true")
+    mon.set_defaults(func=_run_monitor)
+
+    hist = sub.add_parser("history", help="List past scans from the history DB.")
+    hist.add_argument("--db", default="webrecon.db", help="History DB path")
+    hist.add_argument("--target", default=None, help="Filter by target")
+    hist.add_argument("--limit", type=int, default=25, help="Max rows")
+    hist.set_defaults(func=_run_history)
 
     lst = sub.add_parser("list-checks", help="List available vulnerability checks.")
     lst.set_defaults(func=_list_checks)

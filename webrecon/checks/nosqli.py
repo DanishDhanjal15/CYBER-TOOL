@@ -13,7 +13,7 @@ from webrecon.model.severity import Severity
 
 
 # Operator payloads (as param-value suffixes) that change query logic.
-_PAYLOADS = ["[$ne]=1", "[$gt]=", "[$regex]=.*", "'||'1'=='1"]
+_PAYLOADS = None  # loaded from data/payloads/nosqli.txt at runtime
 _ERROR_SIGNS = ("mongoerror", "mongodb", "bson", "e11000", "cast to objectid",
                 "$where", "unexpected token", "castError".lower())
 
@@ -34,7 +34,7 @@ class NoSqlInjectionCheck(Check):
             base_body = (base.text or "") if base is not None else ""
             base_len = len(base_body)
             base_err = any(s in base_body.lower() for s in _ERROR_SIGNS)
-            for payload in _PAYLOADS:
+            for payload in load_lines("payloads/nosqli.txt"):
                 # Inject operator by appending to the parameter name/value.
                 resp = send(http, point, payload)
                 if resp is None:

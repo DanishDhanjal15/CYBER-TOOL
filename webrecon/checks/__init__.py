@@ -30,6 +30,8 @@ from .xxe import XxeCheck
 from .graphql import GraphqlCheck
 from .templates_check import TemplateCheck
 from webrecon.browser.domxss import BrowserDomXssCheck
+from .cve_check import CveCheck
+from .ratelimit import RateLimitCheck
 
 # Registry: order roughly reflects cost (cheap/passive first).
 _REGISTRY: list[type[Check]] = [
@@ -55,19 +57,28 @@ _REGISTRY: list[type[Check]] = [
     CrlfInjectionCheck,
     XxeCheck,
     GraphqlCheck,
+    CveCheck,
+    RateLimitCheck,
     TemplateCheck,
     BrowserDomXssCheck,
 ]
 
+# Opt-in checks: intrusive/aggressive, never run by default — only when the
+# user names them explicitly (--checks bruteforce) or via a dedicated flag.
+from .bruteforce import BruteForceCheck
+_OPTIN: list[type[Check]] = [BruteForceCheck]
+
 
 def all_checks() -> list[Check]:
+    """Default check set — excludes opt-in intrusive checks."""
     return [cls() for cls in _REGISTRY]
 
 
 def checks_by_names(names: list[str]) -> list[Check]:
     wanted = {n.strip().lower() for n in names if n.strip()}
-    return [cls() for cls in _REGISTRY if cls.name in wanted]
+    return [cls() for cls in (_REGISTRY + _OPTIN) if cls.name in wanted]
 
 
 def available_names() -> list[str]:
-    return [cls.name for cls in _REGISTRY]
+    return [cls.name for cls in _REGISTRY] + \
+           [f"{cls.name} (opt-in)" for cls in _OPTIN]

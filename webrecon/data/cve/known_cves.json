@@ -1,0 +1,25 @@
+{
+  "_comment": "Curated offline product->version->CVE map. epss=exploit probability (0-1), kev=CISA Known-Exploited, edb_id=Exploit-DB ID (public exploit), msf=Metasploit module exists. Affected when detected version < version_lt. Extend/replace via --cve-db.",
+  "entries": [
+    {"product": "nginx", "version_lt": "1.21.0", "cve": "CVE-2021-23017", "severity": "high", "cvss": 7.7, "kev": false, "epss": 0.10, "msf": false, "description": "nginx resolver off-by-one heap write (RCE potential)."},
+    {"product": "apache", "version_lt": "2.4.50", "cve": "CVE-2021-41773", "severity": "critical", "cvss": 9.8, "kev": true, "epss": 0.97, "edb_id": 50383, "msf": true, "description": "Apache httpd 2.4.49/2.4.50 path traversal + RCE (actively exploited)."},
+    {"product": "apache", "version_lt": "2.4.52", "cve": "CVE-2021-44790", "severity": "critical", "cvss": 9.8, "kev": false, "epss": 0.30, "msf": false, "description": "Apache httpd mod_lua buffer overflow."},
+    {"product": "openssh", "version_lt": "9.8", "cve": "CVE-2024-6387", "severity": "high", "cvss": 8.1, "kev": false, "epss": 0.55, "msf": false, "description": "OpenSSH 'regreSSHion' unauthenticated RCE (sshd)."},
+    {"product": "php", "version_lt": "8.1.29", "cve": "CVE-2024-4577", "severity": "critical", "cvss": 9.8, "kev": true, "epss": 0.95, "edb_id": 52024, "msf": true, "description": "PHP-CGI argument injection -> RCE on Windows (actively exploited)."},
+    {"product": "jquery", "version_lt": "3.5.0", "cve": "CVE-2020-11022", "severity": "medium", "cvss": 6.1, "kev": false, "epss": 0.20, "msf": false, "description": "jQuery cross-site scripting via HTML from untrusted sources."},
+    {"product": "jquery", "version_lt": "1.9.0", "cve": "CVE-2012-6708", "severity": "medium", "cvss": 6.1, "kev": false, "epss": 0.15, "msf": false, "description": "jQuery selector interpretation XSS in old versions."},
+    {"product": "bootstrap", "version_lt": "3.4.0", "cve": "CVE-2018-14040", "severity": "medium", "cvss": 6.1, "kev": false, "epss": 0.10, "msf": false, "description": "Bootstrap XSS in the collapse data-parent attribute."},
+    {"product": "angular", "version_lt": "1.6.9", "cve": "CVE-2018-2783", "severity": "medium", "cvss": 6.1, "kev": false, "epss": 0.08, "msf": false, "description": "AngularJS (1.x) known XSS/sandbox-bypass class; upgrade off 1.x."},
+    {"product": "lodash", "version_lt": "4.17.21", "cve": "CVE-2021-23337", "severity": "high", "cvss": 7.2, "kev": false, "epss": 0.12, "msf": false, "description": "lodash command injection via template."},
+    {"product": "wordpress", "version_lt": "5.8.3", "cve": "CVE-2022-21661", "severity": "high", "cvss": 8.0, "kev": false, "epss": 0.25, "msf": false, "description": "WordPress WP_Query SQL injection."},
+    {"product": "drupal", "version_lt": "7.58", "cve": "CVE-2018-7600", "severity": "critical", "cvss": 9.8, "kev": true, "epss": 0.97, "edb_id": 44449, "msf": true, "description": "Drupalgeddon2 remote code execution (actively exploited)."},
+    {"product": "tomcat", "version_lt": "9.0.31", "cve": "CVE-2020-1938", "severity": "critical", "cvss": 9.8, "kev": true, "epss": 0.94, "edb_id": 48143, "msf": true, "description": "Apache Tomcat 'Ghostcat' AJP file read/inclusion -> RCE."},
+    {"product": "iis", "version_lt": "10.0", "cve": "CVE-2015-1635", "severity": "critical", "cvss": 9.8, "kev": false, "epss": 0.40, "edb_id": 36773, "msf": true, "description": "Microsoft IIS HTTP.sys remote code execution (MS15-034)."},
+    {"product": "express", "version_lt": "4.17.3", "cve": "CVE-2022-24999", "severity": "high", "cvss": 7.5, "kev": false, "epss": 0.20, "msf": false, "description": "Express/qs prototype-pollution denial of service."},
+    {"product": "log4j", "version_lt": "2.17.1", "cve": "CVE-2021-44228", "severity": "critical", "cvss": 10.0, "kev": true, "epss": 0.97, "edb_id": 50592, "msf": true, "description": "Log4Shell JNDI remote code execution (actively exploited)."},
+    {"product": "spring", "version_lt": "5.3.18", "cve": "CVE-2022-22965", "severity": "critical", "cvss": 9.8, "kev": true, "epss": 0.95, "edb_id": 50918, "msf": true, "description": "Spring4Shell remote code execution (actively exploited)."},
+    {"product": "openssl", "version_lt": "1.0.1g", "cve": "CVE-2014-0160", "severity": "critical", "cvss": 7.5, "kev": false, "epss": 0.90, "edb_id": 32745, "msf": true, "description": "OpenSSL Heartbleed memory disclosure."},
+    {"product": "vue", "version_lt": "2.6.11", "cve": "CVE-2019-1010266", "severity": "low", "cvss": 4.0, "kev": false, "epss": 0.05, "msf": false, "description": "Vue.js ReDoS in older 2.x releases."},
+    {"product": "moment", "version_lt": "2.29.4", "cve": "CVE-2022-31129", "severity": "high", "cvss": 7.5, "kev": false, "epss": 0.10, "msf": false, "description": "moment.js ReDoS via crafted date string."}
+  ]
+}

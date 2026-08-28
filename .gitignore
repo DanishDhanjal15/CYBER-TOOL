@@ -1,0 +1,21 @@
+# Scan outputs / artifacts (never commit)
+reports/
+screenshots/
+*.sarif
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

@@ -25,6 +25,14 @@ webrecon scan http://testphp.vulnweb.com --authorize   # a public, authorized te
 webrecon list-checks
 ```
 
+> **`webrecon` not found after install?** On Windows the Python `Scripts`
+> folder is often not on `PATH`. Either use the module form (always works):
+> ```bash
+> python -m webrecon scan http://testphp.vulnweb.com --authorize
+> ```
+> or add the `Scripts` directory pip prints during install to your `PATH` and
+> reopen the terminal.
+
 Reports land in `./reports/` (open the `.html` in a browser). Prefer a
 one-file Windows download or Scoop instead? See [Install](#install). Full docs below.
 

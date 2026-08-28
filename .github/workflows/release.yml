@@ -25,19 +25,59 @@ jobs:
         run: pyinstaller webrecon.spec --clean --noconfirm
       - name: Smoke-check the exe
         run: dist\webrecon.exe --version
-      - name: Publish GitHub Release with the exe
+      - name: Generate SHA-256 checksum
+        shell: pwsh
+        run: |
+          $hash = (Get-FileHash dist\webrecon.exe -Algorithm SHA256).Hash.ToLower()
+          "$hash  webrecon.exe" | Out-File -Encoding ascii dist\webrecon.exe.sha256
+          Write-Host "SHA-256: $hash"
+      - name: Generate Scoop manifest (with real hash)
+        shell: pwsh
+        run: |
+          $ver = "${{ github.ref_name }}".TrimStart("v")
+          $hash = (Get-FileHash dist\webrecon.exe -Algorithm SHA256).Hash.ToLower()
+          $m = Get-Content scoop/webrecon.json -Raw | ConvertFrom-Json
+          $m.version = $ver
+          $m.architecture.'64bit'.url = "https://github.com/${{ github.repository }}/releases/download/v$ver/webrecon.exe"
+          $m.architecture.'64bit'.hash = $hash
+          ($m | ConvertTo-Json -Depth 10) | Out-File -Encoding utf8 dist\webrecon.json
+          Write-Host "Scoop manifest built for v$ver"
+      - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/webrecon.exe
+          files: |
+            dist/webrecon.exe
+            dist/webrecon.exe.sha256
+            dist/webrecon.json
           generate_release_notes: true
           body: |
             ## WebRecon ${{ github.ref_name }}
 
-            Download **webrecon.exe** below — a standalone Windows build, no Python
-            needed. Run it from a terminal:
+            **`webrecon.exe`** — a standalone Windows build, no Python needed.
 
             ```
             webrecon.exe scan http://example.com --authorize
+            ```
+
+            ### ⚠️ "Windows protected your PC" / "isn't commonly downloaded"?
+            That's **Microsoft SmartScreen** — it warns about any new,
+            unsigned open-source program until it builds download reputation.
+            It does **not** mean the file is unsafe. This is an open-source tool;
+            you can read all the code in this repo and build the exe yourself.
+
+            **To run it:** click **More info → Run anyway**.
+
+            **Verify the download first (recommended):** compare the SHA-256 of the
+            file you downloaded against `webrecon.exe.sha256` below:
+            ```powershell
+            Get-FileHash webrecon.exe -Algorithm SHA256
+            ```
+            The two hashes must match exactly.
+
+            **Prefer no warning at all?** Install from source instead — same tool,
+            no executable:
+            ```
+            pip install git+https://github.com/DanishDhanjal15/CYBER-TOOL.git
             ```
 
             ⚠️ Authorized testing only — scan systems you own or are permitted to test.

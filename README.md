@@ -19,16 +19,14 @@ with no cloud and no paid APIs.
 ## Quick start
 
 ```bash
-git clone https://github.com/DanishDhanjal15/CYBER-TOOL.git
-cd CYBER-TOOL
-python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
-pip install -e .
+pip install webrecon-scanner        # installs the `webrecon` command
 
-python -m webrecon scan http://testphp.vulnweb.com --authorize   # a public, authorized test target
-python -m webrecon list-checks
+webrecon scan http://testphp.vulnweb.com --authorize   # a public, authorized test target
+webrecon list-checks
 ```
 
-Reports land in `./reports/` (open the `.html` in a browser). Full docs below.
+Reports land in `./reports/` (open the `.html` in a browser). Prefer a
+one-file Windows download or Scoop instead? See [Install](#install). Full docs below.
 
 ## Contents
 
@@ -101,14 +99,45 @@ PoC** (a `curl` command) that reproduces it — so you can verify before acting.
 
 ## Install
 
+### Option A — pip (recommended · any OS · no warning)
 ```bash
-cd tool
+pip install webrecon-scanner        # the `webrecon` command; import name stays `webrecon`
+webrecon scan http://example.com --authorize
+```
+
+### Option B — Scoop (Windows · no warning)
+[Scoop](https://scoop.sh) installs the exe without any SmartScreen prompt:
+```powershell
+scoop install https://github.com/DanishDhanjal15/CYBER-TOOL/releases/latest/download/webrecon.json
+webrecon scan http://example.com --authorize
+```
+
+### Option C — Windows .exe (no Python)
+Download `webrecon.exe` from the [latest release](https://github.com/DanishDhanjal15/CYBER-TOOL/releases/latest)
+and run it from a terminal:
+```
+webrecon.exe scan http://example.com --authorize
+```
+
+> **"Windows protected your PC" / "webrecon.exe isn't commonly downloaded"?**
+> That's **Microsoft SmartScreen**, which warns about *any* new, **unsigned**
+> open-source executable until it builds download reputation — it does **not**
+> mean the file is unsafe. Click **More info → Run anyway**. For assurance,
+> verify the download against the published checksum:
+> ```powershell
+> Get-FileHash webrecon.exe -Algorithm SHA256   # must match webrecon.exe.sha256
+> ```
+> Removing the warning entirely requires a paid code-signing certificate; until
+> then, the source install below has no warning at all.
+
+### Option D — from source (developers)
+```bash
+git clone https://github.com/DanishDhanjal15/CYBER-TOOL.git
+cd CYBER-TOOL
 python -m venv .venv
 # Windows:  .venv\Scripts\activate
 # Linux/Mac: source .venv/bin/activate
-pip install -r requirements.txt
-# or install as a command:
-pip install -e .
+pip install -e .           # installs the `webrecon` command
 ```
 
 ## Rate-limiting audit + algorithm advice

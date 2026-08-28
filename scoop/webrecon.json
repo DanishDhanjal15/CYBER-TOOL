@@ -1,0 +1,25 @@
+{
+  "version": "0.0.0",
+  "description": "WebRecon - offline web vulnerability scanner + vuln-management toolkit (authorized testing only).",
+  "homepage": "https://github.com/DanishDhanjal15/CYBER-TOOL",
+  "license": "MIT",
+  "notes": "Authorized security testing only. Run: webrecon scan <url> --authorize",
+  "architecture": {
+    "64bit": {
+      "url": "https://github.com/DanishDhanjal15/CYBER-TOOL/releases/download/v0.0.0/webrecon.exe",
+      "hash": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  },
+  "bin": "webrecon.exe",
+  "checkver": "github",
+  "autoupdate": {
+    "architecture": {
+      "64bit": {
+        "url": "https://github.com/DanishDhanjal15/CYBER-TOOL/releases/download/v$version/webrecon.exe"
+      }
+    },
+    "hash": {
+      "url": "$url.sha256"
+    }
+  }
+}

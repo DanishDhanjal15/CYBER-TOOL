@@ -206,15 +206,27 @@
         <div style="margin-top:16px">
           <a class="btn btn-primary" href="https://github.com/DanishDhanjal15/CYBER-TOOL/releases/latest/download/webrecon.exe">⬇ Download webrecon.exe</a>
         </div>
+        <div style="margin-top:16px;padding:12px 14px;background:#0e1421;
+          border:1px solid var(--line);border-radius:10px;font-size:13px;color:var(--muted)">
+          <b style="color:var(--text)">Seeing "Windows protected your PC" / "isn't commonly
+          downloaded"?</b> That's Microsoft SmartScreen warning about any new,
+          <b>unsigned open-source</b> app until it earns download reputation — not a sign
+          the file is unsafe. Click <b style="color:var(--text)">More info → Run anyway</b>.
+          For peace of mind, verify the SHA-256 against <code>webrecon.exe.sha256</code> on
+          the release page, or use the source install on the right (no .exe, no warning).
+        </div>
       </div>
       <div class="ins">
-        <div class="tag">DEVELOPERS · ANY OS</div>
-        <h3>Install from source</h3>
-        <div class="code">git clone https://github.com/DanishDhanjal15/CYBER-TOOL.git
-cd CYBER-TOOL
-pip install -e .
+        <div class="tag">RECOMMENDED · ANY OS · NO WARNING</div>
+        <h3>Install with pip</h3>
+        <p style="color:var(--muted);font-size:14px;margin-bottom:12px">
+          The cleanest way — no download prompt, works everywhere:</p>
+        <div class="code">pip install webrecon-scanner
 
-python -m webrecon scan http://example.com --authorize</div>
+webrecon scan http://example.com --authorize</div>
+        <p style="color:var(--muted);font-size:13px;margin:14px 0 6px">
+          On Windows you can also use <b style="color:var(--text)">Scoop</b> (no warning):</p>
+        <div class="code">scoop install https://github.com/DanishDhanjal15/CYBER-TOOL/releases/latest/download/webrecon.json</div>
         <div style="margin-top:16px">
           <a class="btn btn-ghost" href="https://github.com/DanishDhanjal15/CYBER-TOOL">View on GitHub →</a>
         </div>

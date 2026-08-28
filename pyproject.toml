@@ -3,7 +3,9 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "webrecon"
+# PyPI distribution name ('webrecon' was taken). The import package and the CLI
+# command are still `webrecon` — only the pip-install name differs.
+name = "webrecon-scanner"
 version = "0.1.0"
 description = "A from-scratch Python CLI web vulnerability scanner + vuln-management toolkit (authorized testing only)."
 readme = "README.md"

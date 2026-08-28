@@ -32,10 +32,11 @@ exe = EXE(
     a.datas,
     [],
     name="webrecon",
+    version="version_info.txt",
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
-    upx=True,
+    upx=False,
     console=True,          # it's a CLI tool
     disable_windowed_traceback=False,
     target_arch=None,

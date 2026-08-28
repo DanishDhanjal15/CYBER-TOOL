@@ -123,7 +123,7 @@ PoC** (a `curl` command) that reproduces it — so you can verify before acting.
 ### Option A — pip (recommended · any OS · no warning)
 ```bash
 pip install webrecon-scanner        # the `webrecon` command; import name stays `webrecon`
-webrecon scan http://example.com --authorize
+ python -m webrecon scan http://example.com --authorize
 ```
 
 ### Option B — Scoop (Windows · no warning)
